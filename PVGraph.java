@@ -98,12 +98,20 @@ public class PVGraph extends ApplicationFrame {
                 }
         });
         
+        JButton newGraphButton = new JButton("New Graph");
+        newGraphButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    new PVGraph(PVGraph.this.conn);
+                }
+        });
+        
         buttonsPanel.add(yearDecButton);
         buttonsPanel.add(yearIncButton);
         buttonsPanel.add(monthDecButton);
         buttonsPanel.add(monthIncButton);
         buttonsPanel.add(dayDecButton);
         buttonsPanel.add(dayIncButton);
+        buttonsPanel.add(newGraphButton);
         
         mainPanel.add(buttonsPanel);
         setContentPane(mainPanel);
@@ -204,9 +212,10 @@ public class PVGraph extends ApplicationFrame {
                 catch(Exception e) {
                     // relax
                 }
+                // this kills the application
+                super.windowClosing(event);
             }
         }
-        super.windowClosing(event);
     }
     
     public java.util.List<DayData> getDayData(int year, int month, int day) {

@@ -133,10 +133,22 @@ public class PVGraph extends ApplicationFrame {
         int month = date.get(Calendar.MONTH) + 1;
         int day = date.get(Calendar.DAY_OF_MONTH);
         
-        XYDataset dataset = createDayDataset(year, month, day);
+        java.util.List<DayData> dayData = getDayData(year, month, day);
+
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        double totalDayPower = 0;
         
+        for(DayData dd : dayData) {
+            TimeSeries s = new TimeSeries(dd.inverter + (dayData.size() > 1? ("-" + dd.serial) : ""));
+            for(int i = 0; i < dd.times.size(); ++i)
+                s.add(new Minute(dd.times.get(i)), dd.powers.get(i));
+            dataset.addSeries(s);
+            totalDayPower += dd.endTotalPower - dd.startTotalPower;
+        }
+        
+        String dayPower = totalDayPower < 1.0? String.format("%d W", (int)(totalDayPower * 1000)) : String.format("%.3f KW", totalDayPower);
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-            year + "/" + month + "/" + day, // title
+            year + "/" + month + "/" + day + " " + dayPower, // title
             "Time",     // x-axis label
             "Watts",    // y-axis label
             dataset,    // data
@@ -182,24 +194,11 @@ public class PVGraph extends ApplicationFrame {
     class DayData {
         String inverter;
         String serial;
+        double startTotalPower;
+        double endTotalPower;
         java.util.List<Timestamp> times = new java.util.ArrayList<Timestamp>(12 * 24);
         java.util.List<Integer> powers = new java.util.ArrayList<Integer>(12 * 24);
     };
-    
-    private XYDataset createDayDataset(int year, int month, int day) {
-        
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        
-        java.util.List<DayData> dayData = getDayData(year, month, day);
-        for(DayData dd : dayData) {
-            TimeSeries s = new TimeSeries(dd.inverter + (dayData.size() > 1? ("-" + dd.serial) : ""));
-            for(int i = 0; i < dd.times.size(); ++i)
-                s.add(new Minute(dd.times.get(i)), dd.powers.get(i));
-            dataset.addSeries(s);
-        }
-        
-        return dataset;
-    }
     
     public void windowClosing(java.awt.event.WindowEvent event) {
         synchronized(graphs) {
@@ -232,10 +231,12 @@ public class PVGraph extends ApplicationFrame {
                     dd = new DayData();
                     dd.serial = serial;
                     dd.inverter = rs.getString("inverter");
+                    dd.startTotalPower = rs.getDouble("ETotalToday");
                     result.put(serial, dd);
                 }
                 dd.times.add(rs.getTimestamp("DateTime"));
                 dd.powers.add(rs.getInt("CurrentPower"));
+                dd.endTotalPower = rs.getDouble("ETotalToday");
             }
         } catch (SQLException e ) {
             System.err.println("Query failed: " + e.getMessage());

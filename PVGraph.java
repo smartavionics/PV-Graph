@@ -269,8 +269,11 @@ public class PVGraph extends ApplicationFrame {
             System.out.println ("Database connection established");
             new PVGraph(conn);
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             System.err.println("Cannot connect to " + url + ": " + e.getMessage());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

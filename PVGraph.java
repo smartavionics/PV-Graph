@@ -1,7 +1,7 @@
 
-// compile: javac -cp "../jfreechart-1.0.13/lib/*" PVGraph.java
+// compile: javac -cp "jfreechart-1.0.13/lib/*" PVGraph.java
 
-// run: java -cp ".:../jfreechart-1.0.13/*:/usr/share/java/mysql-connector-java.jar" PVGraph
+// run: java -cp ".:jfreechart-1.0.13/*:/usr/share/java/mysql-connector-java.jar" PVGraph
 
 import java.sql.*;
 import java.util.*;

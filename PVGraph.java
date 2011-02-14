@@ -19,6 +19,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -28,6 +30,8 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.RefineryUtilities;
@@ -352,28 +356,31 @@ public class PVGraph extends ApplicationFrame {
         
         java.util.List<PeriodData> periodData = getMonthData(year, month);
 
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         double totalPeriodPower = 0;
         
         for(PeriodData pd : periodData) {
-            TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
+            String series = pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : "");
             double lastPower = pd.startTotalPower;
             for(int i = 0; i < pd.numPowers; ++i) {
                 if(pd.powers[i] != 0) {
-                    s.add(new Day(i + 1, month, year), pd.powers[i] - lastPower);
+                    dataset.addValue(pd.powers[i] - lastPower, series, "" + (i + 1));
                     lastPower = pd.powers[i];
                 }
+                else
+                    dataset.addValue(0, series, "" + (i + 1));
             }
-            dataset.addSeries(s);
             totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
         }
         
         String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+        
+        JFreeChart chart = ChartFactory.createBarChart(
             year + " / " + month + "      " + periodPower, // title
-            "Day",      // x-axis label
-            "KW",       // y-axis label
+            "Day",      // domain label
+            "KW",       // range label
             dataset,    // data
+            PlotOrientation.VERTICAL,
             true,       // create legend?
             true,       // generate tooltips?
             false       // generate URLs?
@@ -381,7 +388,7 @@ public class PVGraph extends ApplicationFrame {
         
         chart.setBackgroundPaint(Color.white);
         
-        XYPlot plot = (XYPlot) chart.getPlot();
+        CategoryPlot plot = (CategoryPlot)chart.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
@@ -395,7 +402,8 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setLowerBound(0.0);
             powerAxis.setUpperBound(maxPower);
         }
-        
+
+        /*
         XYItemRenderer r = plot.getRenderer();
         if (r instanceof XYLineAndShapeRenderer) {
             XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
@@ -409,6 +417,7 @@ public class PVGraph extends ApplicationFrame {
         
         DateAxis axis = (DateAxis) plot.getDomainAxis();
         axis.setDateFormatOverride(new SimpleDateFormat("d"));
+        */
         
         return chart;   
     }
@@ -419,12 +428,11 @@ public class PVGraph extends ApplicationFrame {
         
         java.util.List<PeriodData> periodData = getYearData(year, detailed);
 
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         double totalPeriodPower = 0;
         
-        GregorianCalendar gc = new GregorianCalendar();
         for(PeriodData pd : periodData) {
-            TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
+            String series = pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : "");
             double lastPower = pd.startTotalPower;
             for(int i = 0; i < (detailed? 365 : 12); ++i) {
                 double power = 0;
@@ -432,23 +440,24 @@ public class PVGraph extends ApplicationFrame {
                     power = pd.powers[i] - lastPower;
                     lastPower = pd.powers[i];
                 }
-                if(detailed) {
-                    gc.set(Calendar.DAY_OF_YEAR, i + 1);
-                    s.add(new Day(gc.get(Calendar.DAY_OF_MONTH), gc.get(Calendar.MONTH) + 1, year), power);
+                if(detailed)
+                    dataset.addValue(power, series, "" + (i + 1));
+                else {
+                    String months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+                    dataset.addValue(power, series, months[i]);
                 }
-                else
-                    s.add(new Month(i + 1, year), power);
             }
-            dataset.addSeries(s);
             totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
         }
         
         String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+        
+        JFreeChart chart = ChartFactory.createBarChart(
             year + "      " + periodPower, // title
-            (detailed? "Day" : "Month"),      // x-axis label
-            "KW",       // y-axis label
+            (detailed? "Day" : "Month"),      // Domain axis label
+            "KW",       // range axis label
             dataset,    // data
+            PlotOrientation.VERTICAL,
             true,       // create legend?
             true,       // generate tooltips?
             false       // generate URLs?
@@ -456,7 +465,7 @@ public class PVGraph extends ApplicationFrame {
         
         chart.setBackgroundPaint(Color.white);
         
-        XYPlot plot = (XYPlot) chart.getPlot();
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
@@ -471,6 +480,7 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower);
         }
         
+        /*
         XYItemRenderer r = plot.getRenderer();
         if (r instanceof XYLineAndShapeRenderer) {
             XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
@@ -481,13 +491,15 @@ public class PVGraph extends ApplicationFrame {
             for(int i = 0; i < dataset.getSeriesCount(); ++i)
                 renderer.setSeriesShape(i, new Rectangle(-2, -2, 4, 4));
         }
+        */
         
+        /*
         DateAxis axis = (DateAxis) plot.getDomainAxis();
         if(detailed)
             axis.setDateFormatOverride(new SimpleDateFormat("MMM:d"));
         else
             axis.setDateFormatOverride(new SimpleDateFormat("MMM"));
-        
+        */
         return chart;
     }
     
@@ -558,12 +570,16 @@ public class PVGraph extends ApplicationFrame {
                     pd.serial = serial;
                     pd.inverter = rs.getString("inverter");
                     pd.startTotalPower = rs.getDouble("ETotalToday");
+                    gc.setTime(rs.getTimestamp("DateTime"));
+                    gc.set(Calendar.DAY_OF_MONTH, 1);
+                    gc.add(Calendar.MONTH, 1);
+                    gc.add(Calendar.DAY_OF_MONTH, -1);
+                    pd.numPowers = gc.get(Calendar.DAY_OF_MONTH);
                     result.put(serial, pd);
                 }
-                gc.setTime(rs.getTimestamp("DateTime"));
-                pd.numPowers = gc.get(Calendar.DAY_OF_MONTH);
                 double power = rs.getDouble("ETotalToday");
-                pd.powers[pd.numPowers - 1] =  power;
+                gc.setTime(rs.getTimestamp("DateTime"));
+                pd.powers[gc.get(Calendar.DAY_OF_MONTH) - 1] =  power;
                 pd.endTotalPower = power;
             }
         } catch (SQLException e ) {

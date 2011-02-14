@@ -23,6 +23,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
+import org.jfree.data.time.Month;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -49,12 +50,12 @@ public class PVGraph extends ApplicationFrame {
         java.util.List<Integer> powers = new java.util.ArrayList<Integer>(12 * 24);
     };
 
-    private class MonthData {
+    private class PeriodData {
         String inverter;
         String serial;
         double startTotalPower;
         double endTotalPower;
-        double powers[] = new double[31];
+        double powers[] = new double[365];
         int numPowers;
     };
     
@@ -68,6 +69,7 @@ public class PVGraph extends ApplicationFrame {
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.addTab("Day", makeDayPanel());
         tabPane.addTab("Month", makeMonthPanel());
+        tabPane.addTab("Year", makeYearPanel());
         setContentPane(tabPane);
         pack();
         setVisible(true);
@@ -86,14 +88,14 @@ public class PVGraph extends ApplicationFrame {
         dayDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.DAY_OF_MONTH, -1);
-                    dayChartPanel.setChart(createDayChart());;
+                    dayChartPanel.setChart(createDayChart());
                 }
         });
         JButton dayIncButton = new JButton("Day +");
         dayIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.DAY_OF_MONTH, 1);
-                    dayChartPanel.setChart(createDayChart());;
+                    dayChartPanel.setChart(createDayChart());
                 }
         });
         
@@ -101,14 +103,14 @@ public class PVGraph extends ApplicationFrame {
         monthDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, -1);
-                    dayChartPanel.setChart(createDayChart());;
+                    dayChartPanel.setChart(createDayChart());
                 }
         });
         JButton monthIncButton = new JButton("Month +");
         monthIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, 1);
-                    dayChartPanel.setChart(createDayChart());;
+                    dayChartPanel.setChart(createDayChart());
                 }
         });
         
@@ -116,14 +118,14 @@ public class PVGraph extends ApplicationFrame {
         yearDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, -1);
-                    dayChartPanel.setChart(createDayChart());;
+                    dayChartPanel.setChart(createDayChart());
                 }
         });
         JButton yearIncButton = new JButton("Year +");
         yearIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, 1);
-                    dayChartPanel.setChart(createDayChart());;
+                    dayChartPanel.setChart(createDayChart());
                 }
         });
         
@@ -161,14 +163,14 @@ public class PVGraph extends ApplicationFrame {
         monthDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, -1);
-                    monthChartPanel.setChart(createMonthChart());;
+                    monthChartPanel.setChart(createMonthChart());
                 }
         });
         JButton monthIncButton = new JButton("Month +");
         monthIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, 1);
-                    monthChartPanel.setChart(createMonthChart());;
+                    monthChartPanel.setChart(createMonthChart());
                 }
         });
         
@@ -176,14 +178,14 @@ public class PVGraph extends ApplicationFrame {
         yearDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, -1);
-                    monthChartPanel.setChart(createMonthChart());;
+                    monthChartPanel.setChart(createMonthChart());
                 }
         });
         JButton yearIncButton = new JButton("Year +");
         yearIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, 1);
-                    monthChartPanel.setChart(createMonthChart());;
+                    monthChartPanel.setChart(createMonthChart());
                 }
         });
         
@@ -206,6 +208,54 @@ public class PVGraph extends ApplicationFrame {
         return monthPanel;
     }
 
+    public JPanel makeYearPanel() {
+                
+        JPanel yearPanel = new JPanel();
+        yearPanel.setLayout(new BoxLayout(yearPanel, BoxLayout.Y_AXIS));
+
+        final ChartPanel yearChartPanel = (ChartPanel)createYearChartPanel(false);
+        yearChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+        yearPanel.add(yearChartPanel);
+
+        final JRadioButton detailedButton = new JRadioButton("Detailed");
+        detailedButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
+                }
+        });
+
+        JButton yearDecButton = new JButton("Year -");
+        yearDecButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    date.add(Calendar.YEAR, -1);
+                    yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
+                }
+        });
+        JButton yearIncButton = new JButton("Year +");
+        yearIncButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    date.add(Calendar.YEAR, 1);
+                    yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
+                }
+        });
+        
+        JButton newGraphButton = new JButton("New Graph");
+        newGraphButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    new PVGraph(PVGraph.this.conn);
+                }
+        });
+        
+        JPanel buttonsPanel = new JPanel();
+        yearPanel.add(buttonsPanel);
+
+        buttonsPanel.add(detailedButton);
+        buttonsPanel.add(yearDecButton);
+        buttonsPanel.add(yearIncButton);
+        buttonsPanel.add(newGraphButton);
+        
+        return yearPanel;
+    }
     
     public JPanel createDayChartPanel() {
         JFreeChart chart = createDayChart();
@@ -217,6 +267,14 @@ public class PVGraph extends ApplicationFrame {
 
     public JPanel createMonthChartPanel() {
         JFreeChart chart = createMonthChart();
+        ChartPanel panel = new ChartPanel(chart);
+        panel.setFillZoomRectangle(true);
+        panel.setMouseWheelEnabled(true);
+        return panel;
+    }
+
+    public JPanel createYearChartPanel(boolean detailed) {
+        JFreeChart chart = createYearChart(detailed);
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
         panel.setMouseWheelEnabled(true);
@@ -292,29 +350,29 @@ public class PVGraph extends ApplicationFrame {
         int year = date.get(Calendar.YEAR);
         int month = date.get(Calendar.MONTH) + 1;
         
-        java.util.List<MonthData> monthData = getMonthData(year, month);
+        java.util.List<PeriodData> periodData = getMonthData(year, month);
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        double totalMonthPower = 0;
+        double totalPeriodPower = 0;
         
-        for(MonthData md : monthData) {
-            TimeSeries s = new TimeSeries(md.inverter + (monthData.size() > 1? ("-" + md.serial) : ""));
-            double lastPower = md.startTotalPower;
-            for(int i = 0; i < md.numPowers; ++i) {
-                if(md.powers[i] != 0) {
-                    s.add(new Day(i + 1, month, year), md.powers[i] - lastPower);
-                    lastPower = md.powers[i];
+        for(PeriodData pd : periodData) {
+            TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
+            double lastPower = pd.startTotalPower;
+            for(int i = 0; i < pd.numPowers; ++i) {
+                if(pd.powers[i] != 0) {
+                    s.add(new Day(i + 1, month, year), pd.powers[i] - lastPower);
+                    lastPower = pd.powers[i];
                 }
             }
             dataset.addSeries(s);
-            totalMonthPower += md.endTotalPower - md.startTotalPower;
+            totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
         }
         
-        String monthPower = totalMonthPower < 1.0? String.format("%d W", (int)(totalMonthPower * 1000)) : String.format("%.3f KW", totalMonthPower);
+        String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-            year + " / " + month + "      " + monthPower, // title
-            "Day",     // x-axis label
-            "KW",    // y-axis label
+            year + " / " + month + "      " + periodPower, // title
+            "Day",      // x-axis label
+            "KW",       // y-axis label
             dataset,    // data
             true,       // create legend?
             true,       // generate tooltips?
@@ -353,6 +411,84 @@ public class PVGraph extends ApplicationFrame {
         axis.setDateFormatOverride(new SimpleDateFormat("d"));
         
         return chart;   
+    }
+
+    private JFreeChart createYearChart(boolean detailed) {
+        
+        int year = date.get(Calendar.YEAR);
+        
+        java.util.List<PeriodData> periodData = getYearData(year, detailed);
+
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        double totalPeriodPower = 0;
+        
+        GregorianCalendar gc = new GregorianCalendar();
+        for(PeriodData pd : periodData) {
+            TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
+            double lastPower = pd.startTotalPower;
+            for(int i = 0; i < (detailed? 365 : 12); ++i) {
+                double power = 0;
+                if(pd.powers[i] != 0) {
+                    power = pd.powers[i] - lastPower;
+                    lastPower = pd.powers[i];
+                }
+                if(detailed) {
+                    gc.set(Calendar.DAY_OF_YEAR, i + 1);
+                    s.add(new Day(gc.get(Calendar.DAY_OF_MONTH), gc.get(Calendar.MONTH) + 1, year), power);
+                }
+                else
+                    s.add(new Month(i + 1, year), power);
+            }
+            dataset.addSeries(s);
+            totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
+        }
+        
+        String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+            year + "      " + periodPower, // title
+            (detailed? "Day" : "Month"),      // x-axis label
+            "KW",       // y-axis label
+            dataset,    // data
+            true,       // create legend?
+            true,       // generate tooltips?
+            false       // generate URLs?
+            );
+        
+        chart.setBackgroundPaint(Color.white);
+        
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white);
+        plot.setRangeGridlinePaint(Color.white);
+        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);
+        double maxPower = Double.parseDouble(props.getProperty("maxpower.year", "0"));
+        if(maxPower > 0) {
+            ValueAxis powerAxis = plot.getRangeAxis();
+            powerAxis.setAutoRange(false);
+            powerAxis.setLowerBound(0.0);
+            powerAxis.setUpperBound(maxPower);
+        }
+        
+        XYItemRenderer r = plot.getRenderer();
+        if (r instanceof XYLineAndShapeRenderer) {
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+            renderer.setBaseShapesVisible(true);
+            renderer.setBaseShapesFilled(true);
+            renderer.setDrawSeriesLineAsPath(true);
+            //renderer.setSeriesPaint(0, new Color(0, 128, 0));
+            for(int i = 0; i < dataset.getSeriesCount(); ++i)
+                renderer.setSeriesShape(i, new Rectangle(-2, -2, 4, 4));
+        }
+        
+        DateAxis axis = (DateAxis) plot.getDomainAxis();
+        if(detailed)
+            axis.setDateFormatOverride(new SimpleDateFormat("MMM:d"));
+        else
+            axis.setDateFormatOverride(new SimpleDateFormat("MMM"));
+        
+        return chart;
     }
     
     public void windowClosing(java.awt.event.WindowEvent event) {
@@ -406,29 +542,29 @@ public class PVGraph extends ApplicationFrame {
         return new java.util.ArrayList<DayData>(result.values());
     }
     
-    public java.util.List<MonthData> getMonthData(int year, int month) {
+    public java.util.List<PeriodData> getMonthData(int year, int month) {
         Statement stmt = null;
         String query = "select * from DayData where year(DateTime) = " + year + " and month(DateTime) = " + month + " order by DateTime";
-        Map<String, MonthData> result = new HashMap<String, MonthData>();
+        Map<String, PeriodData> result = new HashMap<String, PeriodData>();
         GregorianCalendar gc = new GregorianCalendar();
         try {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String serial = rs.getString("serial");
-                MonthData md = result.get(serial);
-                if(md == null) {
-                    md = new MonthData();
-                    md.serial = serial;
-                    md.inverter = rs.getString("inverter");
-                    md.startTotalPower = rs.getDouble("ETotalToday");
-                    result.put(serial, md);
+                PeriodData pd = result.get(serial);
+                if(pd == null) {
+                    pd = new PeriodData();
+                    pd.serial = serial;
+                    pd.inverter = rs.getString("inverter");
+                    pd.startTotalPower = rs.getDouble("ETotalToday");
+                    result.put(serial, pd);
                 }
                 gc.setTime(rs.getTimestamp("DateTime"));
-                md.numPowers = gc.get(Calendar.DAY_OF_MONTH);
+                pd.numPowers = gc.get(Calendar.DAY_OF_MONTH);
                 double power = rs.getDouble("ETotalToday");
-                md.powers[md.numPowers - 1] =  power;
-                md.endTotalPower = power;
+                pd.powers[pd.numPowers - 1] =  power;
+                pd.endTotalPower = power;
             }
         } catch (SQLException e ) {
             System.err.println("Query failed: " + e.getMessage());
@@ -440,7 +576,47 @@ public class PVGraph extends ApplicationFrame {
                 // relax
             }
         }
-        return new java.util.ArrayList<MonthData>(result.values());
+        return new java.util.ArrayList<PeriodData>(result.values());
+    }
+    
+    public java.util.List<PeriodData> getYearData(int year, boolean detailed) {
+        Statement stmt = null;
+        String query = "select * from DayData where year(DateTime) = " + year + " order by DateTime";
+        Map<String, PeriodData> result = new HashMap<String, PeriodData>();
+        GregorianCalendar gc = new GregorianCalendar();
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                String serial = rs.getString("serial");
+                PeriodData pd = result.get(serial);
+                if(pd == null) {
+                    pd = new PeriodData();
+                    pd.serial = serial;
+                    pd.inverter = rs.getString("inverter");
+                    pd.startTotalPower = rs.getDouble("ETotalToday");
+                    result.put(serial, pd);
+                }
+                gc.setTime(rs.getTimestamp("DateTime"));
+                if(detailed)
+                    pd.numPowers = gc.get(Calendar.DAY_OF_YEAR);
+                else
+                    pd.numPowers = gc.get(Calendar.MONTH) + 1;
+                double power = rs.getDouble("ETotalToday");
+                pd.powers[pd.numPowers - 1] =  power;
+                pd.endTotalPower = power;
+            }
+        } catch (SQLException e ) {
+            System.err.println("Query failed: " + e.getMessage());
+        } finally {
+            try {
+                stmt.close();
+            }
+            catch (SQLException e) {
+                // relax
+            }
+        }
+        return new java.util.ArrayList<PeriodData>(result.values());
     }
     
     public static void main (String[] args) {

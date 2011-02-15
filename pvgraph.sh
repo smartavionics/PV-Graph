@@ -1,3 +1,7 @@
 #!/bin/sh
 
-java -cp ".:jfreechart-1.0.13/*:/usr/share/java/mysql-connector-java.jar" PVGraph
+JFREECHART_JARS_DIR=jfreechart-1.0.13/lib/*
+
+MYSQL_CONNECTOR_JAR=/usr/share/java/mysql-connector-java.jar
+
+java -cp "$JFREECHART_JARS_DIR:$MYSQL_CONNECTOR_JAR:pvgraph.jar" PVGraph

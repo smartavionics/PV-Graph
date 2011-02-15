@@ -144,12 +144,12 @@ public class PVGraph extends ApplicationFrame {
         JPanel buttonsPanel = new JPanel();
         dayPanel.add(buttonsPanel);
 
-        buttonsPanel.add(yearDecButton);
-        buttonsPanel.add(yearIncButton);
-        buttonsPanel.add(monthDecButton);
-        buttonsPanel.add(monthIncButton);
         buttonsPanel.add(dayDecButton);
         buttonsPanel.add(dayIncButton);
+        buttonsPanel.add(monthDecButton);
+        buttonsPanel.add(monthIncButton);
+        buttonsPanel.add(yearDecButton);
+        buttonsPanel.add(yearIncButton);
         buttonsPanel.add(newGraphButton);
         
         return dayPanel;
@@ -204,10 +204,10 @@ public class PVGraph extends ApplicationFrame {
         JPanel buttonsPanel = new JPanel();
         monthPanel.add(buttonsPanel);
 
-        buttonsPanel.add(yearDecButton);
-        buttonsPanel.add(yearIncButton);
         buttonsPanel.add(monthDecButton);
         buttonsPanel.add(monthIncButton);
+        buttonsPanel.add(yearDecButton);
+        buttonsPanel.add(yearIncButton);
         buttonsPanel.add(newGraphButton);
         
         return monthPanel;
@@ -307,7 +307,7 @@ public class PVGraph extends ApplicationFrame {
         
         String dayPower = totalDayPower < 1.0? String.format("%d W", (int)(totalDayPower * 1000)) : String.format("%.3f KW", totalDayPower);
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-            year + " / " + month + " / " + day + "      " + dayPower, // title
+            day + " / " + month + " / " + year + "      " + dayPower, // title
             "Time",     // x-axis label
             "Watts",    // y-axis label
             dataset,    // data
@@ -377,7 +377,7 @@ public class PVGraph extends ApplicationFrame {
         String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
         
         JFreeChart chart = ChartFactory.createBarChart(
-            year + " / " + month + "      " + periodPower, // title
+            month + " / " + year + "      " + periodPower, // title
             "Day",      // domain label
             "KW",       // range label
             dataset,    // data

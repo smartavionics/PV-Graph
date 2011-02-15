@@ -23,6 +23,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.AreaRenderer;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
@@ -339,7 +340,14 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower * 1000);
         }
         
-        plot.getRenderer().setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+        XYItemRenderer r = plot.getRenderer();
+        r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+        for(int i = 0; i < dayData.size(); ++i) {
+            DayData dd = dayData.get(i);
+            String colour = props.getProperty("plotcolour." + dd.serial, props.getProperty("plotcolour", null));
+            if(colour != null)
+                r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+        }
         
         DateAxis axis = new DateAxis();
         axis.setLabel(plot.getDomainAxis().getLabel());
@@ -403,6 +411,13 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower);
         }
         
+        CategoryItemRenderer r = plot.getRenderer();
+        for(int i = 0; i < periodData.size(); ++i) {
+            PeriodData pd = periodData.get(i);
+            String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+            if(colour != null)
+                r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+        }
         return chart;   
     }
 
@@ -471,7 +486,14 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower);
         }
 
-        plot.getRenderer().setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+        XYItemRenderer r = plot.getRenderer();
+        r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+        for(int i = 0; i < periodData.size(); ++i) {
+            PeriodData pd = periodData.get(i);
+            String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+            if(colour != null)
+                r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+        }
         
         DateAxis axis = new DateAxis();
         axis.setLabel(plot.getDomainAxis().getLabel());

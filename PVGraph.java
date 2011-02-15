@@ -475,8 +475,12 @@ public class PVGraph extends ApplicationFrame {
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        /*
         plot.setDomainCrosshairVisible(true);
         plot.setRangeCrosshairVisible(true);
+        */
+        plot.setDomainPannable(true);
+        plot.setRangePannable(true);
         double maxPower = Double.parseDouble(props.getProperty("maxpower.year", "0"));
         if(maxPower > 0) {
             ValueAxis powerAxis = plot.getRangeAxis();

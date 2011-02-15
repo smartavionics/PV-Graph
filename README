@@ -12,9 +12,9 @@ Uses the JFreeChart library to do the actual plotting:
 
   http://www.jfree.org/jfreechart/
 
-At the moment, compilation is by hand and you need to specify where the JFreeChart jars are located:
+At the moment, compilation is by hand and you need to specify where the JFreeChart jars are located, e.g:
 
-  javac -cp "../jfreechart-1.0.13/lib/*" PVGraph.java
+  javac -cp "jfreechart-1.0.13/lib/*" PVGraph.java
   
 A simple shell script, pvgraph.sh, is provided to run the program - you will almost certainly need to
 modify this to suit your setup.
@@ -25,5 +25,5 @@ is to create a pvgraph.properties file in the current directory which contains t
 user = your username
 password = your password
 url = jdbc:mysql://localhost/smatool
-maxpower = 2000 (optional, sets upper limit on power axis - by default, graphs auto-scale) 
+maxpower.day = 2 (optional, sets upper limit on power axis (KW) - by default, graphs auto-scale) 
 

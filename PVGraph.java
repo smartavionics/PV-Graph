@@ -307,11 +307,12 @@ public class PVGraph extends ApplicationFrame {
         }
         
         String dayPower = totalDayPower < 1.0? String.format("%d W", (int)(totalDayPower * 1000)) : String.format("%.3f KW", totalDayPower);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+        JFreeChart chart = ChartFactory.createXYAreaChart(
             day + " / " + month + " / " + year + "      " + dayPower, // title
             "Time",     // x-axis label
             "Watts",    // y-axis label
             dataset,    // data
+            PlotOrientation.VERTICAL,
             true,       // create legend?
             true,       // generate tooltips?
             false       // generate URLs?
@@ -324,8 +325,12 @@ public class PVGraph extends ApplicationFrame {
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        /*
         plot.setDomainCrosshairVisible(true);
         plot.setRangeCrosshairVisible(true);
+        */
+        plot.setDomainPannable(true);
+        plot.setRangePannable(true);
         double maxPower = Double.parseDouble(props.getProperty("maxpower.day", "0"));
         if(maxPower > 0) {
             ValueAxis powerAxis = plot.getRangeAxis();
@@ -334,6 +339,7 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower * 1000);
         }
         
+        /*
         XYItemRenderer r = plot.getRenderer();
         if (r instanceof XYLineAndShapeRenderer) {
             XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
@@ -344,10 +350,15 @@ public class PVGraph extends ApplicationFrame {
             for(int i = 0; i < dataset.getSeriesCount(); ++i)
                 renderer.setSeriesShape(i, new Rectangle(-2, -2, 4, 4));
         }
+        */
         
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
+        plot.getRenderer().setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+        
+        DateAxis axis = new DateAxis();
+        axis.setLabel(plot.getDomainAxis().getLabel());
         axis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
-        
+        plot.setDomainAxis(axis);
+
         return chart;   
     }
 

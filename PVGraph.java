@@ -339,19 +339,6 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower * 1000);
         }
         
-        /*
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-            renderer.setBaseShapesVisible(true);
-            renderer.setBaseShapesFilled(true);
-            renderer.setDrawSeriesLineAsPath(true);
-            //renderer.setSeriesPaint(0, new Color(0, 128, 0));
-            for(int i = 0; i < dataset.getSeriesCount(); ++i)
-                renderer.setSeriesShape(i, new Rectangle(-2, -2, 4, 4));
-        }
-        */
-        
         plot.getRenderer().setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
         
         DateAxis axis = new DateAxis();
@@ -415,22 +402,6 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setLowerBound(0.0);
             powerAxis.setUpperBound(maxPower);
         }
-
-        /*
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-            renderer.setBaseShapesVisible(true);
-            renderer.setBaseShapesFilled(true);
-            renderer.setDrawSeriesLineAsPath(true);
-            //renderer.setSeriesPaint(0, new Color(0, 128, 0));
-            for(int i = 0; i < dataset.getSeriesCount(); ++i)
-                renderer.setSeriesShape(i, new Rectangle(-2, -2, 4, 4));
-        }
-        
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("d"));
-        */
         
         return chart;   
     }

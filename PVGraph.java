@@ -25,6 +25,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.AreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.Month;
 import org.jfree.data.time.Minute;
@@ -484,6 +485,8 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setUpperBound(maxPower);
         }
 
+        plot.getRenderer().setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+        
         DateAxis axis = new DateAxis();
         axis.setLabel(plot.getDomainAxis().getLabel());
         if(detailed)

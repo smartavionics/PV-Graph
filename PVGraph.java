@@ -13,6 +13,7 @@ import java.awt.event.*;
 import java.text.SimpleDateFormat;
 
 import javax.swing.*;
+import javax.swing.border.*;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -91,14 +92,14 @@ public class PVGraph extends ApplicationFrame {
         dayChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
         dayPanel.add(dayChartPanel);
         
-        JButton dayDecButton = new JButton("Day -");
+        JButton dayDecButton = new JButton("-");
         dayDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.DAY_OF_MONTH, -1);
                     dayChartPanel.setChart(createDayChart());
                 }
         });
-        JButton dayIncButton = new JButton("Day +");
+        JButton dayIncButton = new JButton("+");
         dayIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.DAY_OF_MONTH, 1);
@@ -106,14 +107,14 @@ public class PVGraph extends ApplicationFrame {
                 }
         });
         
-        JButton monthDecButton = new JButton("Month -");
+        JButton monthDecButton = new JButton("-");
         monthDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, -1);
                     dayChartPanel.setChart(createDayChart());
                 }
         });
-        JButton monthIncButton = new JButton("Month +");
+        JButton monthIncButton = new JButton("+");
         monthIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, 1);
@@ -121,14 +122,14 @@ public class PVGraph extends ApplicationFrame {
                 }
         });
         
-        JButton yearDecButton = new JButton("Year -");
+        JButton yearDecButton = new JButton("-");
         yearDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, -1);
                     dayChartPanel.setChart(createDayChart());
                 }
         });
-        JButton yearIncButton = new JButton("Year +");
+        JButton yearIncButton = new JButton("+");
         yearIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, 1);
@@ -144,14 +145,30 @@ public class PVGraph extends ApplicationFrame {
         });
         
         JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setBorder(new EtchedBorder());
         dayPanel.add(buttonsPanel);
+        
+        JPanel dayButtonsPanel = new JPanel();
+        dayButtonsPanel.setBorder(new EtchedBorder());
+        dayButtonsPanel.add(new JLabel("Day"));
+        dayButtonsPanel.add(dayDecButton);
+        dayButtonsPanel.add(dayIncButton);
+        buttonsPanel.add(dayButtonsPanel);
+        
+        JPanel monthButtonsPanel = new JPanel();
+        monthButtonsPanel.setBorder(new EtchedBorder());
+        monthButtonsPanel.add(new JLabel("Month"));
+        monthButtonsPanel.add(monthDecButton);
+        monthButtonsPanel.add(monthIncButton);
+        buttonsPanel.add(monthButtonsPanel);
 
-        buttonsPanel.add(dayDecButton);
-        buttonsPanel.add(dayIncButton);
-        buttonsPanel.add(monthDecButton);
-        buttonsPanel.add(monthIncButton);
-        buttonsPanel.add(yearDecButton);
-        buttonsPanel.add(yearIncButton);
+        JPanel yearButtonsPanel = new JPanel();
+        yearButtonsPanel.setBorder(new EtchedBorder());
+        yearButtonsPanel.add(new JLabel("Year"));
+        yearButtonsPanel.add(yearDecButton);
+        yearButtonsPanel.add(yearIncButton);
+        buttonsPanel.add(yearButtonsPanel);
+
         buttonsPanel.add(newGraphButton);
         
         return dayPanel;
@@ -166,14 +183,14 @@ public class PVGraph extends ApplicationFrame {
         monthChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
         monthPanel.add(monthChartPanel);
                 
-        JButton monthDecButton = new JButton("Month -");
+        JButton monthDecButton = new JButton("-");
         monthDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, -1);
                     monthChartPanel.setChart(createMonthChart());
                 }
         });
-        JButton monthIncButton = new JButton("Month +");
+        JButton monthIncButton = new JButton("+");
         monthIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.MONTH, 1);
@@ -181,14 +198,14 @@ public class PVGraph extends ApplicationFrame {
                 }
         });
         
-        JButton yearDecButton = new JButton("Year -");
+        JButton yearDecButton = new JButton("-");
         yearDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, -1);
                     monthChartPanel.setChart(createMonthChart());
                 }
         });
-        JButton yearIncButton = new JButton("Year +");
+        JButton yearIncButton = new JButton("+");
         yearIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, 1);
@@ -204,12 +221,23 @@ public class PVGraph extends ApplicationFrame {
         });
         
         JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setBorder(new EtchedBorder());
         monthPanel.add(buttonsPanel);
 
-        buttonsPanel.add(monthDecButton);
-        buttonsPanel.add(monthIncButton);
-        buttonsPanel.add(yearDecButton);
-        buttonsPanel.add(yearIncButton);
+        JPanel monthButtonsPanel = new JPanel();
+        monthButtonsPanel.setBorder(new EtchedBorder());
+        monthButtonsPanel.add(new JLabel("Month"));
+        monthButtonsPanel.add(monthDecButton);
+        monthButtonsPanel.add(monthIncButton);
+        buttonsPanel.add(monthButtonsPanel);
+
+        JPanel yearButtonsPanel = new JPanel();
+        yearButtonsPanel.setBorder(new EtchedBorder());
+        yearButtonsPanel.add(new JLabel("Year"));
+        yearButtonsPanel.add(yearDecButton);
+        yearButtonsPanel.add(yearIncButton);
+        buttonsPanel.add(yearButtonsPanel);
+
         buttonsPanel.add(newGraphButton);
         
         return monthPanel;
@@ -231,14 +259,14 @@ public class PVGraph extends ApplicationFrame {
                 }
         });
 
-        JButton yearDecButton = new JButton("Year -");
+        JButton yearDecButton = new JButton("-");
         yearDecButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, -1);
                     yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
                 }
         });
-        JButton yearIncButton = new JButton("Year +");
+        JButton yearIncButton = new JButton("+");
         yearIncButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     date.add(Calendar.YEAR, 1);
@@ -254,13 +282,18 @@ public class PVGraph extends ApplicationFrame {
         });
         
         JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setBorder(new EtchedBorder());
         yearPanel.add(buttonsPanel);
 
         buttonsPanel.add(detailedButton);
-        buttonsPanel.add(yearDecButton);
-        buttonsPanel.add(yearIncButton);
-        buttonsPanel.add(newGraphButton);
-        
+        JPanel yearButtonsPanel = new JPanel();
+        yearButtonsPanel.setBorder(new EtchedBorder());
+        yearButtonsPanel.add(new JLabel("Year"));
+        yearButtonsPanel.add(yearDecButton);
+        yearButtonsPanel.add(yearIncButton);
+        buttonsPanel.add(yearButtonsPanel);
+
+        buttonsPanel.add(newGraphButton);        
         return yearPanel;
     }
     

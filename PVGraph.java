@@ -559,7 +559,7 @@ public class PVGraph extends ApplicationFrame {
     
     public java.util.List<PeriodData> getMonthData(int year, int month) {
         Statement stmt = null;
-        String query = "select * from DayData where year(DateTime) = " + year + " and month(DateTime) = " + month + " order by DateTime";
+        String query = "select * from DayData where year(DateTime) = " + year + " and month(DateTime) = " + month + " and CurrentPower != 0 order by DateTime";
         Map<String, PeriodData> result = new HashMap<String, PeriodData>();
         GregorianCalendar gc = new GregorianCalendar();
         try {
@@ -600,7 +600,7 @@ public class PVGraph extends ApplicationFrame {
     
     public java.util.List<PeriodData> getYearData(int year, boolean detailed) {
         Statement stmt = null;
-        String query = "select * from DayData where year(DateTime) = " + year + " order by DateTime";
+        String query = "select * from DayData where year(DateTime) = " + year + " and CurrentPower != 0 order by DateTime";
         Map<String, PeriodData> result = new HashMap<String, PeriodData>();
         GregorianCalendar gc = new GregorianCalendar();
         try {

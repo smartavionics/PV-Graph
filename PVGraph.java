@@ -22,6 +22,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.AreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
@@ -428,11 +429,12 @@ public class PVGraph extends ApplicationFrame {
         
         java.util.List<PeriodData> periodData = getYearData(year, detailed);
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
         double totalPeriodPower = 0;
         
         for(PeriodData pd : periodData) {
-            String series = pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : "");
+            TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
+            dataset.addSeries(s);
             double lastPower = pd.startTotalPower;
             for(int i = 0; i < (detailed? 365 : 12); ++i) {
                 double power = 0;
@@ -440,11 +442,13 @@ public class PVGraph extends ApplicationFrame {
                     power = pd.powers[i] - lastPower;
                     lastPower = pd.powers[i];
                 }
-                if(detailed)
-                    dataset.addValue(power, series, "" + (i + 1));
+                if(detailed) {
+                    GregorianCalendar gc = new GregorianCalendar();
+                    gc.set(Calendar.DAY_OF_YEAR, i + 1);
+                    s.add(new Day(gc.getTime()), power);
+                }
                 else {
-                    String months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-                    dataset.addValue(power, series, months[i]);
+                    s.add(new Month(i + 1, year), power);
                 }
             }
             totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
@@ -452,10 +456,10 @@ public class PVGraph extends ApplicationFrame {
         
         String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
         
-        JFreeChart chart = ChartFactory.createBarChart(
+        JFreeChart chart = ChartFactory.createXYAreaChart(
             year + "      " + periodPower, // title
-            (detailed? "Day" : "Month"),      // Domain axis label
-            "KW",       // range axis label
+            (detailed? "Day" : "Month"),      // x-axis label
+            "KW",       // y-axis label
             dataset,    // data
             PlotOrientation.VERTICAL,
             true,       // create legend?
@@ -465,7 +469,7 @@ public class PVGraph extends ApplicationFrame {
         
         chart.setBackgroundPaint(Color.white);
         
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        XYPlot plot = (XYPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
@@ -479,27 +483,15 @@ public class PVGraph extends ApplicationFrame {
             powerAxis.setLowerBound(0.0);
             powerAxis.setUpperBound(maxPower);
         }
-        
-        /*
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-            renderer.setBaseShapesVisible(true);
-            renderer.setBaseShapesFilled(true);
-            renderer.setDrawSeriesLineAsPath(true);
-            //renderer.setSeriesPaint(0, new Color(0, 128, 0));
-            for(int i = 0; i < dataset.getSeriesCount(); ++i)
-                renderer.setSeriesShape(i, new Rectangle(-2, -2, 4, 4));
-        }
-        */
-        
-        /*
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
+
+        DateAxis axis = new DateAxis();
+        axis.setLabel(plot.getDomainAxis().getLabel());
         if(detailed)
             axis.setDateFormatOverride(new SimpleDateFormat("MMM:d"));
         else
-            axis.setDateFormatOverride(new SimpleDateFormat("MMM"));
-        */
+            axis.setDateFormatOverride(new SimpleDateFormat("MMMM"));
+        plot.setDomainAxis(axis);
+        
         return chart;
     }
     

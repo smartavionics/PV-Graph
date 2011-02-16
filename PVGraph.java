@@ -47,7 +47,7 @@ public class PVGraph extends ApplicationFrame {
     static LinkedList<PVGraph> graphs = new LinkedList<PVGraph>();
     
     private Connection conn;
-    private Calendar date; 
+    private Calendar date;
     
     private class DayData {
         String inverter;
@@ -66,6 +66,10 @@ public class PVGraph extends ApplicationFrame {
         double powers[] = new double[366];
         int numPowers;
     };
+    
+    private interface PVGraphView {
+        void updateChart();
+    }
     
     public PVGraph(Connection conn) {
         super("PV Power");
@@ -88,7 +92,7 @@ public class PVGraph extends ApplicationFrame {
         setVisible(true);
     }
 
-    public JPanel makeCommonButtonsPanel() {
+    public JPanel makeCommonButtonsPanel(final PVGraphView view) {
         JPanel commonButtonsPanel = new JPanel();
         commonButtonsPanel.setBorder(new EtchedBorder());
 
@@ -102,14 +106,21 @@ public class PVGraph extends ApplicationFrame {
         return commonButtonsPanel;
     }
     
-    private class DayView {
+    private class DayView implements PVGraphView {
+        
+        ChartPanel dayChartPanel;
+        
+        public void updateChart() {
+            System.out.println("Updating day view for " + date.getTime());
+            dayChartPanel.setChart(createChart());
+        }
         
         public JPanel makePanel() {
             
             JPanel dayPanel = new JPanel();
             dayPanel.setLayout(new BoxLayout(dayPanel, BoxLayout.Y_AXIS));
             
-            final ChartPanel dayChartPanel = new ChartPanel(null);
+            dayChartPanel = new ChartPanel(null);
             dayChartPanel.setFillZoomRectangle(true);
             dayChartPanel.setMouseWheelEnabled(true);
             dayChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
@@ -119,14 +130,14 @@ public class PVGraph extends ApplicationFrame {
             dayDecButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.DAY_OF_MONTH, -1);
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             JButton dayIncButton = new JButton("+");
             dayIncButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.DAY_OF_MONTH, 1);
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             
@@ -134,14 +145,14 @@ public class PVGraph extends ApplicationFrame {
             monthDecButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.MONTH, -1);
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             JButton monthIncButton = new JButton("+");
             monthIncButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.MONTH, 1);
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             
@@ -149,14 +160,14 @@ public class PVGraph extends ApplicationFrame {
             yearDecButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.YEAR, -1);
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             JButton yearIncButton = new JButton("+");
             yearIncButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.YEAR, 1);
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             
@@ -185,11 +196,11 @@ public class PVGraph extends ApplicationFrame {
             yearButtonsPanel.add(yearIncButton);
             buttonsPanel.add(yearButtonsPanel);
             
-            buttonsPanel.add(makeCommonButtonsPanel());
+            buttonsPanel.add(makeCommonButtonsPanel(this));
             
             dayPanel.addComponentListener(new ComponentAdapter() {
                     public void componentShown(ComponentEvent ce) {
-                        dayChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             
@@ -268,14 +279,21 @@ public class PVGraph extends ApplicationFrame {
         }
     }
     
-    private class MonthView {
+    private class MonthView implements PVGraphView {
+
+        ChartPanel monthChartPanel;
+        
+        public void updateChart() {
+            System.out.println("Updating month view for " + date.getTime());
+            monthChartPanel.setChart(createChart());
+        }
         
         public JPanel makePanel() {
             
             JPanel monthPanel = new JPanel();
             monthPanel.setLayout(new BoxLayout(monthPanel, BoxLayout.Y_AXIS));
             
-            final ChartPanel monthChartPanel = new ChartPanel(null);
+            monthChartPanel = new ChartPanel(null);
             monthChartPanel.setFillZoomRectangle(true);
             monthChartPanel.setMouseWheelEnabled(true);
             monthChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
@@ -285,14 +303,14 @@ public class PVGraph extends ApplicationFrame {
             monthDecButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.MONTH, -1);
-                        monthChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             JButton monthIncButton = new JButton("+");
             monthIncButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.MONTH, 1);
-                        monthChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             
@@ -300,14 +318,14 @@ public class PVGraph extends ApplicationFrame {
             yearDecButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.YEAR, -1);
-                        monthChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             JButton yearIncButton = new JButton("+");
             yearIncButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.YEAR, 1);
-                        monthChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
                         
@@ -329,11 +347,11 @@ public class PVGraph extends ApplicationFrame {
             yearButtonsPanel.add(yearIncButton);
             buttonsPanel.add(yearButtonsPanel);
             
-            buttonsPanel.add(makeCommonButtonsPanel());
+            buttonsPanel.add(makeCommonButtonsPanel(this));
             
             monthPanel.addComponentListener(new ComponentAdapter() {
                     public void componentShown(ComponentEvent ce) {
-                        monthChartPanel.setChart(createChart());
+                        updateChart();
                     }
             });
             
@@ -405,23 +423,31 @@ public class PVGraph extends ApplicationFrame {
         }
     }
     
-    private class YearView {
+    private class YearView implements PVGraphView {
+        
+        ChartPanel yearChartPanel;
+        JRadioButton detailedButton;
+        
+        public void updateChart() {
+            System.out.println("Updating year view for " + date.getTime());
+            yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+        }
         
         public JPanel makePanel() {
             
             JPanel yearPanel = new JPanel();
             yearPanel.setLayout(new BoxLayout(yearPanel, BoxLayout.Y_AXIS));
             
-            final ChartPanel yearChartPanel = new ChartPanel(null);
+            yearChartPanel = new ChartPanel(null);
             yearChartPanel.setFillZoomRectangle(true);
             yearChartPanel.setMouseWheelEnabled(true);
             yearChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
             yearPanel.add(yearChartPanel);
             
-            final JRadioButton detailedButton = new JRadioButton("Detailed");
+            detailedButton = new JRadioButton("Detailed");
             detailedButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
-                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                        updateChart();
                     }
             });
             
@@ -429,14 +455,14 @@ public class PVGraph extends ApplicationFrame {
             yearDecButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.YEAR, -1);
-                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                        updateChart();
                     }
             });
             JButton yearIncButton = new JButton("+");
             yearIncButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         date.add(Calendar.YEAR, 1);
-                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                        updateChart();
                     }
             });
             
@@ -452,11 +478,11 @@ public class PVGraph extends ApplicationFrame {
             yearButtonsPanel.add(yearIncButton);
             buttonsPanel.add(yearButtonsPanel);
             
-            buttonsPanel.add(makeCommonButtonsPanel());
+            buttonsPanel.add(makeCommonButtonsPanel(this));
             
             yearPanel.addComponentListener(new ComponentAdapter() {
                     public void componentShown(ComponentEvent ce) {
-                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                        updateChart();
                     }
             });
             

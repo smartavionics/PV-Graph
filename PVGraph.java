@@ -63,7 +63,7 @@ public class PVGraph extends ApplicationFrame {
         String serial;
         double startTotalPower;
         double endTotalPower;
-        double powers[] = new double[365];
+        double powers[] = new double[366];
         int numPowers;
     };
     

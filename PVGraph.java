@@ -74,473 +74,481 @@ public class PVGraph extends ApplicationFrame {
         synchronized(graphs) {
             graphs.add(this);
         }
+
+        DayView dayView = new DayView();
+        MonthView monthView = new MonthView();
+        YearView yearView = new YearView();
+        
         JTabbedPane tabPane = new JTabbedPane();
-        tabPane.addTab("Day", makeDayPanel());
-        tabPane.addTab("Month", makeMonthPanel());
-        tabPane.addTab("Year", makeYearPanel());
+        tabPane.addTab("Day", dayView.makePanel());
+        tabPane.addTab("Month", monthView.makePanel());
+        tabPane.addTab("Year", yearView.makePanel());
         setContentPane(tabPane);
         pack();
         setVisible(true);
     }
-    
-    public JPanel makeDayPanel() {
-        
-        JPanel dayPanel = new JPanel();
-        dayPanel.setLayout(new BoxLayout(dayPanel, BoxLayout.Y_AXIS));
 
-        final ChartPanel dayChartPanel = (ChartPanel)createDayChartPanel();
-        dayChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
-        dayPanel.add(dayChartPanel);
-        
-        JButton dayDecButton = new JButton("-");
-        dayDecButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.DAY_OF_MONTH, -1);
-                    dayChartPanel.setChart(createDayChart());
-                }
-        });
-        JButton dayIncButton = new JButton("+");
-        dayIncButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.DAY_OF_MONTH, 1);
-                    dayChartPanel.setChart(createDayChart());
-                }
-        });
-        
-        JButton monthDecButton = new JButton("-");
-        monthDecButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.MONTH, -1);
-                    dayChartPanel.setChart(createDayChart());
-                }
-        });
-        JButton monthIncButton = new JButton("+");
-        monthIncButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.MONTH, 1);
-                    dayChartPanel.setChart(createDayChart());
-                }
-        });
-        
-        JButton yearDecButton = new JButton("-");
-        yearDecButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.YEAR, -1);
-                    dayChartPanel.setChart(createDayChart());
-                }
-        });
-        JButton yearIncButton = new JButton("+");
-        yearIncButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.YEAR, 1);
-                    dayChartPanel.setChart(createDayChart());
-                }
-        });
-        
+    public JPanel makeCommonButtonsPanel() {
+        JPanel commonButtonsPanel = new JPanel();
+        commonButtonsPanel.setBorder(new EtchedBorder());
+
         JButton newGraphButton = new JButton("New Graph");
         newGraphButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    new PVGraph(PVGraph.this.conn);
+                    new PVGraph(conn);
                 }
         });
-        
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setBorder(new EtchedBorder());
-        dayPanel.add(buttonsPanel);
-        
-        JPanel dayButtonsPanel = new JPanel();
-        dayButtonsPanel.setBorder(new EtchedBorder());
-        dayButtonsPanel.add(new JLabel("Day"));
-        dayButtonsPanel.add(dayDecButton);
-        dayButtonsPanel.add(dayIncButton);
-        buttonsPanel.add(dayButtonsPanel);
-        
-        JPanel monthButtonsPanel = new JPanel();
-        monthButtonsPanel.setBorder(new EtchedBorder());
-        monthButtonsPanel.add(new JLabel("Month"));
-        monthButtonsPanel.add(monthDecButton);
-        monthButtonsPanel.add(monthIncButton);
-        buttonsPanel.add(monthButtonsPanel);
-
-        JPanel yearButtonsPanel = new JPanel();
-        yearButtonsPanel.setBorder(new EtchedBorder());
-        yearButtonsPanel.add(new JLabel("Year"));
-        yearButtonsPanel.add(yearDecButton);
-        yearButtonsPanel.add(yearIncButton);
-        buttonsPanel.add(yearButtonsPanel);
-
-        buttonsPanel.add(newGraphButton);
-        
-        return dayPanel;
+        commonButtonsPanel.add(newGraphButton);
+        return commonButtonsPanel;
     }
     
-    public JPanel makeMonthPanel() {
+    private class DayView {
         
-        JPanel monthPanel = new JPanel();
-        monthPanel.setLayout(new BoxLayout(monthPanel, BoxLayout.Y_AXIS));
-
-        final ChartPanel monthChartPanel = (ChartPanel)createMonthChartPanel();
-        monthChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
-        monthPanel.add(monthChartPanel);
-                
-        JButton monthDecButton = new JButton("-");
-        monthDecButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.MONTH, -1);
-                    monthChartPanel.setChart(createMonthChart());
-                }
-        });
-        JButton monthIncButton = new JButton("+");
-        monthIncButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.MONTH, 1);
-                    monthChartPanel.setChart(createMonthChart());
-                }
-        });
-        
-        JButton yearDecButton = new JButton("-");
-        yearDecButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.YEAR, -1);
-                    monthChartPanel.setChart(createMonthChart());
-                }
-        });
-        JButton yearIncButton = new JButton("+");
-        yearIncButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.YEAR, 1);
-                    monthChartPanel.setChart(createMonthChart());
-                }
-        });
-        
-        JButton newGraphButton = new JButton("New Graph");
-        newGraphButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    new PVGraph(PVGraph.this.conn);
-                }
-        });
-        
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setBorder(new EtchedBorder());
-        monthPanel.add(buttonsPanel);
-
-        JPanel monthButtonsPanel = new JPanel();
-        monthButtonsPanel.setBorder(new EtchedBorder());
-        monthButtonsPanel.add(new JLabel("Month"));
-        monthButtonsPanel.add(monthDecButton);
-        monthButtonsPanel.add(monthIncButton);
-        buttonsPanel.add(monthButtonsPanel);
-
-        JPanel yearButtonsPanel = new JPanel();
-        yearButtonsPanel.setBorder(new EtchedBorder());
-        yearButtonsPanel.add(new JLabel("Year"));
-        yearButtonsPanel.add(yearDecButton);
-        yearButtonsPanel.add(yearIncButton);
-        buttonsPanel.add(yearButtonsPanel);
-
-        buttonsPanel.add(newGraphButton);
-        
-        return monthPanel;
-    }
-
-    public JPanel makeYearPanel() {
-                
-        JPanel yearPanel = new JPanel();
-        yearPanel.setLayout(new BoxLayout(yearPanel, BoxLayout.Y_AXIS));
-
-        final ChartPanel yearChartPanel = (ChartPanel)createYearChartPanel(false);
-        yearChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
-        yearPanel.add(yearChartPanel);
-
-        final JRadioButton detailedButton = new JRadioButton("Detailed");
-        detailedButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
-                }
-        });
-
-        JButton yearDecButton = new JButton("-");
-        yearDecButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.YEAR, -1);
-                    yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
-                }
-        });
-        JButton yearIncButton = new JButton("+");
-        yearIncButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    date.add(Calendar.YEAR, 1);
-                    yearChartPanel.setChart(createYearChart(detailedButton.isSelected()));
-                }
-        });
-        
-        JButton newGraphButton = new JButton("New Graph");
-        newGraphButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    new PVGraph(PVGraph.this.conn);
-                }
-        });
-        
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setBorder(new EtchedBorder());
-        yearPanel.add(buttonsPanel);
-
-        buttonsPanel.add(detailedButton);
-        JPanel yearButtonsPanel = new JPanel();
-        yearButtonsPanel.setBorder(new EtchedBorder());
-        yearButtonsPanel.add(new JLabel("Year"));
-        yearButtonsPanel.add(yearDecButton);
-        yearButtonsPanel.add(yearIncButton);
-        buttonsPanel.add(yearButtonsPanel);
-
-        buttonsPanel.add(newGraphButton);        
-        return yearPanel;
-    }
-    
-    public JPanel createDayChartPanel() {
-        JFreeChart chart = createDayChart();
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        return panel;
-    }
-
-    public JPanel createMonthChartPanel() {
-        JFreeChart chart = createMonthChart();
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        return panel;
-    }
-
-    public JPanel createYearChartPanel(boolean detailed) {
-        JFreeChart chart = createYearChart(detailed);
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        return panel;
-    }
-    
-    private JFreeChart createDayChart() {
-        
-        int year = date.get(Calendar.YEAR);
-        int month = date.get(Calendar.MONTH) + 1;
-        int day = date.get(Calendar.DAY_OF_MONTH);
-        
-        java.util.List<DayData> dayData = getDayData(year, month, day);
-
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        double totalDayPower = 0;
-        
-        for(DayData dd : dayData) {
-            TimeSeries s = new TimeSeries(dd.inverter + (dayData.size() > 1? ("-" + dd.serial) : ""));
-            for(int i = 0; i < dd.times.size(); ++i)
-                s.add(new Minute(dd.times.get(i)), dd.powers.get(i));
-            dataset.addSeries(s);
-            totalDayPower += dd.endTotalPower - dd.startTotalPower;
+        public JPanel makePanel() {
+            
+            JPanel dayPanel = new JPanel();
+            dayPanel.setLayout(new BoxLayout(dayPanel, BoxLayout.Y_AXIS));
+            
+            final ChartPanel dayChartPanel = new ChartPanel(null);
+            dayChartPanel.setFillZoomRectangle(true);
+            dayChartPanel.setMouseWheelEnabled(true);
+            dayChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            dayPanel.add(dayChartPanel);
+            
+            JButton dayDecButton = new JButton("-");
+            dayDecButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.DAY_OF_MONTH, -1);
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            JButton dayIncButton = new JButton("+");
+            dayIncButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.DAY_OF_MONTH, 1);
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            
+            JButton monthDecButton = new JButton("-");
+            monthDecButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.MONTH, -1);
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            JButton monthIncButton = new JButton("+");
+            monthIncButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.MONTH, 1);
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            
+            JButton yearDecButton = new JButton("-");
+            yearDecButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.YEAR, -1);
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            JButton yearIncButton = new JButton("+");
+            yearIncButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.YEAR, 1);
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setBorder(new EtchedBorder());
+            dayPanel.add(buttonsPanel);
+            
+            JPanel dayButtonsPanel = new JPanel();
+            dayButtonsPanel.setBorder(new EtchedBorder());
+            dayButtonsPanel.add(new JLabel("Day"));
+            dayButtonsPanel.add(dayDecButton);
+            dayButtonsPanel.add(dayIncButton);
+            buttonsPanel.add(dayButtonsPanel);
+            
+            JPanel monthButtonsPanel = new JPanel();
+            monthButtonsPanel.setBorder(new EtchedBorder());
+            monthButtonsPanel.add(new JLabel("Month"));
+            monthButtonsPanel.add(monthDecButton);
+            monthButtonsPanel.add(monthIncButton);
+            buttonsPanel.add(monthButtonsPanel);
+            
+            JPanel yearButtonsPanel = new JPanel();
+            yearButtonsPanel.setBorder(new EtchedBorder());
+            yearButtonsPanel.add(new JLabel("Year"));
+            yearButtonsPanel.add(yearDecButton);
+            yearButtonsPanel.add(yearIncButton);
+            buttonsPanel.add(yearButtonsPanel);
+            
+            buttonsPanel.add(makeCommonButtonsPanel());
+            
+            dayPanel.addComponentListener(new ComponentAdapter() {
+                    public void componentShown(ComponentEvent ce) {
+                        dayChartPanel.setChart(createChart());
+                    }
+            });
+            
+            return dayPanel;
         }
         
-        String dayPower = totalDayPower < 1.0? String.format("%d W", (int)(totalDayPower * 1000)) : String.format("%.3f KW", totalDayPower);
-        JFreeChart chart = ChartFactory.createXYAreaChart(
-            day + " / " + month + " / " + year + "      " + dayPower, // title
-            "Time",     // x-axis label
-            "Watts",    // y-axis label
-            dataset,    // data
-            PlotOrientation.VERTICAL,
-            true,       // create legend?
-            true,       // generate tooltips?
-            false       // generate URLs?
-            );
-        
-        chart.setBackgroundPaint(Color.white);
-        
-        XYPlot plot = (XYPlot) chart.getPlot();
-        if(dayData.size() == 1)
-            plot.setForegroundAlpha(1.0f);
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        /*
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
-        */
-        plot.setDomainPannable(true);
-        plot.setRangePannable(true);
-        double maxPower = Double.parseDouble(props.getProperty("maxpower.day", "0"));
-        if(maxPower > 0) {
-            ValueAxis powerAxis = plot.getRangeAxis();
-            powerAxis.setAutoRange(false);
-            powerAxis.setLowerBound(0.0);
-            powerAxis.setUpperBound(maxPower * 1000);
-        }
-        
-        XYItemRenderer r = plot.getRenderer();
-        r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
-        for(int i = 0; i < dayData.size(); ++i) {
-            DayData dd = dayData.get(i);
-            String colour = props.getProperty("plotcolour." + dd.serial, props.getProperty("plotcolour", null));
-            if(colour != null)
-                r.setSeriesPaint(i, new Color(Integer.decode(colour)));
-        }
-        
-        DateAxis axis = new DateAxis();
-        axis.setLabel(plot.getDomainAxis().getLabel());
-        axis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
-        plot.setDomainAxis(axis);
-
-        return chart;   
-    }
-
-    private JFreeChart createMonthChart() {
-        
-        int year = date.get(Calendar.YEAR);
-        int month = date.get(Calendar.MONTH) + 1;
-        
-        java.util.List<PeriodData> periodData = getMonthData(year, month);
-
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        double totalPeriodPower = 0;
-        
-        for(PeriodData pd : periodData) {
-            String series = pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : "");
-            double lastPower = pd.startTotalPower;
-            for(int i = 0; i < pd.numPowers; ++i) {
-                if(pd.powers[i] != 0) {
-                    dataset.addValue(pd.powers[i] - lastPower, series, "" + (i + 1));
-                    lastPower = pd.powers[i];
-                }
-                else
-                    dataset.addValue(0, series, "" + (i + 1));
+        private JFreeChart createChart() {
+            
+            int year = date.get(Calendar.YEAR);
+            int month = date.get(Calendar.MONTH) + 1;
+            int day = date.get(Calendar.DAY_OF_MONTH);
+            
+            java.util.List<DayData> dayData = getDayData(year, month, day);
+            
+            TimeSeriesCollection dataset = new TimeSeriesCollection();
+            double totalDayPower = 0;
+            
+            for(DayData dd : dayData) {
+                TimeSeries s = new TimeSeries(dd.inverter + (dayData.size() > 1? ("-" + dd.serial) : ""));
+                for(int i = 0; i < dd.times.size(); ++i)
+                    s.add(new Minute(dd.times.get(i)), dd.powers.get(i));
+                dataset.addSeries(s);
+                totalDayPower += dd.endTotalPower - dd.startTotalPower;
             }
-            totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
-        }
-        
-        String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
-        
-        JFreeChart chart = ChartFactory.createBarChart(
-            month + " / " + year + "      " + periodPower, // title
-            "Day",      // domain label
-            "KW",       // range label
-            dataset,    // data
-            PlotOrientation.VERTICAL,
-            true,       // create legend?
-            true,       // generate tooltips?
-            false       // generate URLs?
-            );
-        
-        chart.setBackgroundPaint(Color.white);
-        
-        CategoryPlot plot = (CategoryPlot)chart.getPlot();
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
-        double maxPower = Double.parseDouble(props.getProperty("maxpower.month", "0"));
-        if(maxPower > 0) {
-            ValueAxis powerAxis = plot.getRangeAxis();
-            powerAxis.setAutoRange(false);
-            powerAxis.setLowerBound(0.0);
-            powerAxis.setUpperBound(maxPower);
-        }
-        
-        CategoryItemRenderer r = plot.getRenderer();
-        for(int i = 0; i < periodData.size(); ++i) {
-            PeriodData pd = periodData.get(i);
-            String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
-            if(colour != null)
-                r.setSeriesPaint(i, new Color(Integer.decode(colour)));
-        }
-        return chart;   
-    }
-
-    private JFreeChart createYearChart(boolean detailed) {
-        
-        int year = date.get(Calendar.YEAR);
-        
-        java.util.List<PeriodData> periodData = getYearData(year, detailed);
-
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        double totalPeriodPower = 0;
-        
-        for(PeriodData pd : periodData) {
-            TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
-            dataset.addSeries(s);
-            double lastPower = pd.startTotalPower;
-            for(int i = 0; i < (detailed? 365 : 12); ++i) {
-                double power = 0;
-                if(pd.powers[i] != 0) {
-                    power = pd.powers[i] - lastPower;
-                    lastPower = pd.powers[i];
-                }
-                if(detailed) {
-                    GregorianCalendar gc = new GregorianCalendar();
-                    gc.set(Calendar.DAY_OF_YEAR, i + 1);
-                    s.add(new Day(gc.getTime()), power);
-                }
-                else {
-                    s.add(new Month(i + 1, year), power);
-                }
+            
+            String dayPower = totalDayPower < 1.0? String.format("%d W", (int)(totalDayPower * 1000)) : String.format("%.3f KW", totalDayPower);
+            JFreeChart chart = ChartFactory.createXYAreaChart(
+                day + " / " + month + " / " + year + "      " + dayPower, // title
+                "Time",     // x-axis label
+                "Watts",    // y-axis label
+                dataset,    // data
+                PlotOrientation.VERTICAL,
+                true,       // create legend?
+                true,       // generate tooltips?
+                false       // generate URLs?
+                );
+            
+            chart.setBackgroundPaint(Color.white);
+            
+            XYPlot plot = (XYPlot) chart.getPlot();
+            if(dayData.size() == 1)
+                plot.setForegroundAlpha(1.0f);
+            plot.setBackgroundPaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.white);
+            plot.setRangeGridlinePaint(Color.white);
+            plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+            /*
+            plot.setDomainCrosshairVisible(true);
+            plot.setRangeCrosshairVisible(true);
+            */
+            plot.setDomainPannable(true);
+            plot.setRangePannable(true);
+            double maxPower = Double.parseDouble(props.getProperty("maxpower.day", "0"));
+            if(maxPower > 0) {
+                ValueAxis powerAxis = plot.getRangeAxis();
+                powerAxis.setAutoRange(false);
+                powerAxis.setLowerBound(0.0);
+                powerAxis.setUpperBound(maxPower * 1000);
             }
-            totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
+            
+            XYItemRenderer r = plot.getRenderer();
+            r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+            for(int i = 0; i < dayData.size(); ++i) {
+                DayData dd = dayData.get(i);
+                String colour = props.getProperty("plotcolour." + dd.serial, props.getProperty("plotcolour", null));
+                if(colour != null)
+                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+            }
+            
+            DateAxis axis = new DateAxis();
+            axis.setLabel(plot.getDomainAxis().getLabel());
+            axis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
+            plot.setDomainAxis(axis);
+            
+            return chart;   
+        }
+    }
+    
+    private class MonthView {
+        
+        public JPanel makePanel() {
+            
+            JPanel monthPanel = new JPanel();
+            monthPanel.setLayout(new BoxLayout(monthPanel, BoxLayout.Y_AXIS));
+            
+            final ChartPanel monthChartPanel = new ChartPanel(null);
+            monthChartPanel.setFillZoomRectangle(true);
+            monthChartPanel.setMouseWheelEnabled(true);
+            monthChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            monthPanel.add(monthChartPanel);
+            
+            JButton monthDecButton = new JButton("-");
+            monthDecButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.MONTH, -1);
+                        monthChartPanel.setChart(createChart());
+                    }
+            });
+            JButton monthIncButton = new JButton("+");
+            monthIncButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.MONTH, 1);
+                        monthChartPanel.setChart(createChart());
+                    }
+            });
+            
+            JButton yearDecButton = new JButton("-");
+            yearDecButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.YEAR, -1);
+                        monthChartPanel.setChart(createChart());
+                    }
+            });
+            JButton yearIncButton = new JButton("+");
+            yearIncButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.YEAR, 1);
+                        monthChartPanel.setChart(createChart());
+                    }
+            });
+                        
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setBorder(new EtchedBorder());
+            monthPanel.add(buttonsPanel);
+            
+            JPanel monthButtonsPanel = new JPanel();
+            monthButtonsPanel.setBorder(new EtchedBorder());
+            monthButtonsPanel.add(new JLabel("Month"));
+            monthButtonsPanel.add(monthDecButton);
+            monthButtonsPanel.add(monthIncButton);
+            buttonsPanel.add(monthButtonsPanel);
+            
+            JPanel yearButtonsPanel = new JPanel();
+            yearButtonsPanel.setBorder(new EtchedBorder());
+            yearButtonsPanel.add(new JLabel("Year"));
+            yearButtonsPanel.add(yearDecButton);
+            yearButtonsPanel.add(yearIncButton);
+            buttonsPanel.add(yearButtonsPanel);
+            
+            buttonsPanel.add(makeCommonButtonsPanel());
+            
+            monthPanel.addComponentListener(new ComponentAdapter() {
+                    public void componentShown(ComponentEvent ce) {
+                        monthChartPanel.setChart(createChart());
+                    }
+            });
+            
+            return monthPanel;
         }
         
-        String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
-        
-        JFreeChart chart = ChartFactory.createXYAreaChart(
-            year + "      " + periodPower, // title
-            (detailed? "Day" : "Month"),      // x-axis label
-            "KW",       // y-axis label
-            dataset,    // data
-            PlotOrientation.VERTICAL,
-            true,       // create legend?
-            true,       // generate tooltips?
-            false       // generate URLs?
-            );
-        
-        chart.setBackgroundPaint(Color.white);
-        
-        XYPlot plot = (XYPlot) chart.getPlot();
-        if(periodData.size() == 1)
-            plot.setForegroundAlpha(1.0f);
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        /*
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
-        */
-        plot.setDomainPannable(true);
-        plot.setRangePannable(true);
-        double maxPower = Double.parseDouble(props.getProperty("maxpower.year", "0"));
-        if(maxPower > 0) {
-            ValueAxis powerAxis = plot.getRangeAxis();
-            powerAxis.setAutoRange(false);
-            powerAxis.setLowerBound(0.0);
-            powerAxis.setUpperBound(maxPower);
+        private JFreeChart createChart() {
+            
+            int year = date.get(Calendar.YEAR);
+            int month = date.get(Calendar.MONTH) + 1;
+            
+            java.util.List<PeriodData> periodData = getMonthData(year, month);
+            
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            double totalPeriodPower = 0;
+            
+            for(PeriodData pd : periodData) {
+                String series = pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : "");
+                double lastPower = pd.startTotalPower;
+                for(int i = 0; i < pd.numPowers; ++i) {
+                    if(pd.powers[i] != 0) {
+                        dataset.addValue(pd.powers[i] - lastPower, series, "" + (i + 1));
+                        lastPower = pd.powers[i];
+                    }
+                    else
+                        dataset.addValue(0, series, "" + (i + 1));
+                }
+                totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
+            }
+            
+            String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+            
+            JFreeChart chart = ChartFactory.createBarChart(
+                month + " / " + year + "      " + periodPower, // title
+                "Day",      // domain label
+                "KW",       // range label
+                dataset,    // data
+                PlotOrientation.VERTICAL,
+                true,       // create legend?
+                true,       // generate tooltips?
+                false       // generate URLs?
+                );
+            
+            chart.setBackgroundPaint(Color.white);
+            
+            CategoryPlot plot = (CategoryPlot)chart.getPlot();
+            plot.setBackgroundPaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.white);
+            plot.setRangeGridlinePaint(Color.white);
+            plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+            plot.setDomainCrosshairVisible(true);
+            plot.setRangeCrosshairVisible(true);
+            double maxPower = Double.parseDouble(props.getProperty("maxpower.month", "0"));
+            if(maxPower > 0) {
+                ValueAxis powerAxis = plot.getRangeAxis();
+                powerAxis.setAutoRange(false);
+                powerAxis.setLowerBound(0.0);
+                powerAxis.setUpperBound(maxPower);
+            }
+            
+            CategoryItemRenderer r = plot.getRenderer();
+            for(int i = 0; i < periodData.size(); ++i) {
+                PeriodData pd = periodData.get(i);
+                String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+                if(colour != null)
+                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+            }
+            return chart;   
         }
-
-        XYItemRenderer r = plot.getRenderer();
-        r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
-        for(int i = 0; i < periodData.size(); ++i) {
-            PeriodData pd = periodData.get(i);
-            String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
-            if(colour != null)
-                r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+    }
+    
+    private class YearView {
+        
+        public JPanel makePanel() {
+            
+            JPanel yearPanel = new JPanel();
+            yearPanel.setLayout(new BoxLayout(yearPanel, BoxLayout.Y_AXIS));
+            
+            final ChartPanel yearChartPanel = new ChartPanel(null);
+            yearChartPanel.setFillZoomRectangle(true);
+            yearChartPanel.setMouseWheelEnabled(true);
+            yearChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            yearPanel.add(yearChartPanel);
+            
+            final JRadioButton detailedButton = new JRadioButton("Detailed");
+            detailedButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                    }
+            });
+            
+            JButton yearDecButton = new JButton("-");
+            yearDecButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.YEAR, -1);
+                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                    }
+            });
+            JButton yearIncButton = new JButton("+");
+            yearIncButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        date.add(Calendar.YEAR, 1);
+                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                    }
+            });
+            
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setBorder(new EtchedBorder());
+            yearPanel.add(buttonsPanel);
+            
+            buttonsPanel.add(detailedButton);
+            JPanel yearButtonsPanel = new JPanel();
+            yearButtonsPanel.setBorder(new EtchedBorder());
+            yearButtonsPanel.add(new JLabel("Year"));
+            yearButtonsPanel.add(yearDecButton);
+            yearButtonsPanel.add(yearIncButton);
+            buttonsPanel.add(yearButtonsPanel);
+            
+            buttonsPanel.add(makeCommonButtonsPanel());
+            
+            yearPanel.addComponentListener(new ComponentAdapter() {
+                    public void componentShown(ComponentEvent ce) {
+                        yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+                    }
+            });
+            
+            return yearPanel;
         }
         
-        DateAxis axis = new DateAxis();
-        axis.setLabel(plot.getDomainAxis().getLabel());
-        if(detailed)
-            axis.setDateFormatOverride(new SimpleDateFormat("MMM:d"));
-        else
-            axis.setDateFormatOverride(new SimpleDateFormat("MMMM"));
-        plot.setDomainAxis(axis);
-        
-        return chart;
+        private JFreeChart createChart(boolean detailed) {
+            
+            int year = date.get(Calendar.YEAR);
+            
+            java.util.List<PeriodData> periodData = getYearData(year, detailed);
+            
+            TimeSeriesCollection dataset = new TimeSeriesCollection();
+            double totalPeriodPower = 0;
+            
+            for(PeriodData pd : periodData) {
+                TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
+                dataset.addSeries(s);
+                double lastPower = pd.startTotalPower;
+                for(int i = 0; i < (detailed? 365 : 12); ++i) {
+                    double power = 0;
+                    if(pd.powers[i] != 0) {
+                        power = pd.powers[i] - lastPower;
+                        lastPower = pd.powers[i];
+                    }
+                    if(detailed) {
+                        GregorianCalendar gc = new GregorianCalendar();
+                        gc.set(Calendar.DAY_OF_YEAR, i + 1);
+                        s.add(new Day(gc.getTime()), power);
+                    }
+                    else {
+                        s.add(new Month(i + 1, year), power);
+                    }
+                }
+                totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
+            }
+            
+            String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+            
+            JFreeChart chart = ChartFactory.createXYAreaChart(
+                year + "      " + periodPower, // title
+                (detailed? "Day" : "Month"),      // x-axis label
+                "KW",       // y-axis label
+                dataset,    // data
+                PlotOrientation.VERTICAL,
+                true,       // create legend?
+                true,       // generate tooltips?
+                false       // generate URLs?
+                );
+            
+            chart.setBackgroundPaint(Color.white);
+            
+            XYPlot plot = (XYPlot) chart.getPlot();
+            if(periodData.size() == 1)
+                plot.setForegroundAlpha(1.0f);
+            plot.setBackgroundPaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.white);
+            plot.setRangeGridlinePaint(Color.white);
+            plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+            /*
+            plot.setDomainCrosshairVisible(true);
+            plot.setRangeCrosshairVisible(true);
+            */
+            plot.setDomainPannable(true);
+            plot.setRangePannable(true);
+            double maxPower = Double.parseDouble(props.getProperty("maxpower.year", "0"));
+            if(maxPower > 0) {
+                ValueAxis powerAxis = plot.getRangeAxis();
+                powerAxis.setAutoRange(false);
+                powerAxis.setLowerBound(0.0);
+                powerAxis.setUpperBound(maxPower);
+            }
+            
+            XYItemRenderer r = plot.getRenderer();
+            r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
+            for(int i = 0; i < periodData.size(); ++i) {
+                PeriodData pd = periodData.get(i);
+                String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+                if(colour != null)
+                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+            }
+            
+            DateAxis axis = new DateAxis();
+            axis.setLabel(plot.getDomainAxis().getLabel());
+            if(detailed)
+                axis.setDateFormatOverride(new SimpleDateFormat("MMM:d"));
+            else
+                axis.setDateFormatOverride(new SimpleDateFormat("MMMM"));
+            plot.setDomainAxis(axis);
+            
+            return chart;
+        }
     }
     
     public void windowClosing(java.awt.event.WindowEvent event) {

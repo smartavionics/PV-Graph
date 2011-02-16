@@ -355,6 +355,8 @@ public class PVGraph extends ApplicationFrame {
         chart.setBackgroundPaint(Color.white);
         
         XYPlot plot = (XYPlot) chart.getPlot();
+        if(dayData.size() == 1)
+            plot.setForegroundAlpha(1.0f);
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
@@ -501,6 +503,8 @@ public class PVGraph extends ApplicationFrame {
         chart.setBackgroundPaint(Color.white);
         
         XYPlot plot = (XYPlot) chart.getPlot();
+        if(periodData.size() == 1)
+            plot.setForegroundAlpha(1.0f);
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);

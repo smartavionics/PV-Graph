@@ -102,7 +102,24 @@ public class PVGraph extends ApplicationFrame {
                     new PVGraph(conn);
                 }
         });
+
+        JButton runSmatoolButton = new JButton("Run smatool");
+        runSmatoolButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    try {
+                        String cmd = props.getProperty("smatoolcmd", "smatool");
+                        Runtime.getRuntime().exec(cmd);
+                        System.out.println("Finished executing " + cmd);
+                        view.updateChart();
+                    }
+                    catch (IOException ioe) {
+                        System.err.println(ioe.getMessage());
+                    }
+                }
+        });
+
         commonButtonsPanel.add(newGraphButton);
+        commonButtonsPanel.add(runSmatoolButton);
         return commonButtonsPanel;
     }
     

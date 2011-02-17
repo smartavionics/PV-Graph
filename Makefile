@@ -8,3 +8,5 @@ pvgraph.jar : build PVGraph.java
 build:
 	mkdir build
 
+clean:
+	rm -rf build pvgraph.jar

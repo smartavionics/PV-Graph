@@ -50,6 +50,7 @@ public class PVGraph extends ApplicationFrame {
     private Calendar date;
     private JTabbedPane tabPane;
     private boolean trackDay = true;
+    private PVGraphView[] views;
     
     private class DayData {
         String inverter;
@@ -83,14 +84,14 @@ public class PVGraph extends ApplicationFrame {
             graphs.add(this);
         }
 
-        DayView dayView = new DayView();
-        MonthView monthView = new MonthView();
-        YearView yearView = new YearView();
+        views = new PVGraphView[3];
+        views[0] = new DayView();
+        views[1] = new MonthView();
+        views[2] = new YearView();
         
         tabPane = new JTabbedPane();
-        tabPane.addTab("Day", dayView.makePanel());
-        tabPane.addTab("Month", monthView.makePanel());
-        tabPane.addTab("Year", yearView.makePanel());
+        for(PVGraphView v : views)
+            tabPane.addTab(v.getTabLabel(), v.makePanel());
         setContentPane(tabPane);
         pack();
         setVisible(true);
@@ -99,10 +100,7 @@ public class PVGraph extends ApplicationFrame {
     public void updateView() {
         if(trackDay)
             date = new GregorianCalendar();
-        // FIXME - this kludge works but surely there is a better way
-        Component selectedComponent = tabPane.getSelectedComponent();
-        selectedComponent.setVisible(false);
-        selectedComponent.setVisible(true);
+        views[tabPane.getSelectedIndex()].updateChart();
     }
     
     private JPanel makeCommonButtonsPanel(final PVGraphView view) {

@@ -71,6 +71,8 @@ public class PVGraph extends ApplicationFrame {
     
     private interface PVGraphView {
         void updateChart();
+        String getTabLabel();
+        JPanel makePanel();
     }
     
     public PVGraph(Connection conn) {
@@ -149,6 +151,10 @@ public class PVGraph extends ApplicationFrame {
     private class DayView implements PVGraphView {
         
         ChartPanel dayChartPanel;
+        
+        public String getTabLabel() {
+            return "Day";
+        }
         
         public void updateChart() {
             System.out.println("Updating day view for " + date.getTime());
@@ -331,7 +337,11 @@ public class PVGraph extends ApplicationFrame {
     private class MonthView implements PVGraphView {
 
         ChartPanel monthChartPanel;
-        
+
+        public String getTabLabel() {
+            return "Month";
+        }
+                
         public void updateChart() {
             System.out.println("Updating month view for " + date.getTime());
             monthChartPanel.setChart(createChart());
@@ -476,6 +486,10 @@ public class PVGraph extends ApplicationFrame {
         
         ChartPanel yearChartPanel;
         JRadioButton detailedButton;
+
+        public String getTabLabel() {
+            return "Year";
+        }
         
         public void updateChart() {
             System.out.println("Updating year view for " + date.getTime());

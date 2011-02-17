@@ -48,6 +48,7 @@ public class PVGraph extends ApplicationFrame {
     
     private Connection conn;
     private Calendar date;
+    private JTabbedPane tabPane;
     
     private class DayData {
         String inverter;
@@ -83,7 +84,7 @@ public class PVGraph extends ApplicationFrame {
         MonthView monthView = new MonthView();
         YearView yearView = new YearView();
         
-        JTabbedPane tabPane = new JTabbedPane();
+        tabPane = new JTabbedPane();
         tabPane.addTab("Day", dayView.makePanel());
         tabPane.addTab("Month", monthView.makePanel());
         tabPane.addTab("Year", yearView.makePanel());
@@ -91,8 +92,15 @@ public class PVGraph extends ApplicationFrame {
         pack();
         setVisible(true);
     }
-
-    public JPanel makeCommonButtonsPanel(final PVGraphView view) {
+    
+    public void updateView() {
+        // FIXME - this kludge works but surely there is a better way
+        Component selectedComponent = tabPane.getSelectedComponent();
+        selectedComponent.setVisible(false);
+        selectedComponent.setVisible(true);
+    }
+    
+    private JPanel makeCommonButtonsPanel(final PVGraphView view) {
         JPanel commonButtonsPanel = new JPanel();
         commonButtonsPanel.setBorder(new EtchedBorder());
 
@@ -107,9 +115,7 @@ public class PVGraph extends ApplicationFrame {
         runSmatoolButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     try {
-                        String cmd = props.getProperty("smatoolcmd", "smatool");
-                        Runtime.getRuntime().exec(cmd);
-                        System.out.println("Finished executing " + cmd);
+                        runSmatool();
                         view.updateChart();
                     }
                     catch (IOException ioe) {
@@ -119,7 +125,9 @@ public class PVGraph extends ApplicationFrame {
         });
 
         commonButtonsPanel.add(newGraphButton);
-        commonButtonsPanel.add(runSmatoolButton);
+        if(Integer.decode(props.getProperty("smatool.havebutton", "1")) != 0)
+            commonButtonsPanel.add(runSmatoolButton);
+        
         return commonButtonsPanel;
     }
     
@@ -726,6 +734,12 @@ public class PVGraph extends ApplicationFrame {
         return new java.util.ArrayList<PeriodData>(result.values());
     }
     
+    private static void runSmatool() throws IOException {
+        String cmd = props.getProperty("smatool.cmd", "smatool");
+        System.out.println("Executing " + cmd + " at " + new java.util.Date());
+        Runtime.getRuntime().exec(cmd);
+    }
+    
     public static void main (String[] args) {
         props = new Properties(System.getProperties());
         try {
@@ -743,6 +757,33 @@ public class PVGraph extends ApplicationFrame {
             conn = DriverManager.getConnection (url, user, password);
             System.out.println ("Database connection established");
             new PVGraph(conn);
+            int smatoolPeriod = Integer.decode(props.getProperty("smatool.period", "0"));
+            if(smatoolPeriod > 0) {
+                int smatoolStartHour = Integer.decode(props.getProperty("smatool.starthour", "0"));
+                int smatoolEndHour = Integer.decode(props.getProperty("smatool.endhour", "24"));
+                for(;;) {
+                    GregorianCalendar now = new GregorianCalendar();
+                    int nowHour = now.get(Calendar.HOUR_OF_DAY);
+                    if(nowHour >= smatoolStartHour && nowHour < smatoolEndHour) {
+                        try {
+                            runSmatool();
+                            synchronized (graphs) {
+                                for(PVGraph g : graphs)
+                                    g.updateView();
+                            }
+                        }
+                        catch (IOException ioe) {
+                            System.err.println(ioe.getMessage());
+                        }
+                    }
+                    try {
+                        Thread.sleep(smatoolPeriod * 60 * 1000);
+                    }
+                    catch (InterruptedException ie) {
+                        // break;
+                    }
+                }
+            }
         }
         catch (SQLException e) {
             System.err.println("Cannot connect to " + url + ": " + e.getMessage());

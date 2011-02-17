@@ -49,6 +49,7 @@ public class PVGraph extends ApplicationFrame {
     private Connection conn;
     private Calendar date;
     private JTabbedPane tabPane;
+    private boolean trackDay = true;
     
     private class DayData {
         String inverter;
@@ -94,6 +95,8 @@ public class PVGraph extends ApplicationFrame {
     }
     
     public void updateView() {
+        if(trackDay)
+            date = new GregorianCalendar();
         // FIXME - this kludge works but surely there is a better way
         Component selectedComponent = tabPane.getSelectedComponent();
         selectedComponent.setVisible(false);
@@ -127,6 +130,18 @@ public class PVGraph extends ApplicationFrame {
         commonButtonsPanel.add(newGraphButton);
         if(Integer.decode(props.getProperty("smatool.havebutton", "1")) != 0)
             commonButtonsPanel.add(runSmatoolButton);
+
+        int smatoolPeriod = Integer.decode(props.getProperty("smatool.period", "0"));
+        if(smatoolPeriod > 0) {
+            final JRadioButton trackDayRadioButton = new JRadioButton("Track day");
+            trackDayRadioButton.setSelected(trackDay);
+            trackDayRadioButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        trackDay = trackDayRadioButton.isSelected();
+                    }
+            });
+            commonButtonsPanel.add(trackDayRadioButton);
+        }
         
         return commonButtonsPanel;
     }

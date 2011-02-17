@@ -660,7 +660,11 @@ public class PVGraph extends ApplicationFrame {
                     dd.startTotalPower = rs.getDouble("ETotalToday");
                     result.put(serial, dd);
                 }
-                dd.times.add(rs.getTimestamp("DateTime"));
+                Timestamp ts = rs.getTimestamp("DateTime");
+                // don't create duplicates if DateTime has non-zero seconds/nanos
+                ts.setSeconds(0);
+                ts.setNanos(0);
+                dd.times.add(ts);
                 dd.powers.add(rs.getInt("CurrentPower"));
                 dd.endTotalPower = rs.getDouble("ETotalToday");
             }

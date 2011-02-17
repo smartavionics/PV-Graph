@@ -261,7 +261,7 @@ public class PVGraph extends ApplicationFrame {
             for(DayData dd : dayData) {
                 TimeSeries s = new TimeSeries(dd.inverter + (dayData.size() > 1? ("-" + dd.serial) : ""));
                 for(int i = 0; i < dd.times.size(); ++i)
-                    s.add(new Minute(dd.times.get(i)), dd.powers.get(i));
+                    s.addOrUpdate(new Minute(dd.times.get(i)), dd.powers.get(i));
                 dataset.addSeries(s);
                 totalDayPower += dd.endTotalPower - dd.startTotalPower;
             }

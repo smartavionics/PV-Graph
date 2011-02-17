@@ -31,6 +31,8 @@ A basic cron-like capability to run smatool every now and then is configured wit
     smatool.starthour = NUM         # don't run smatool before this hour (default 0)
     smatool.endhour = NUM           # don't run smatool after this hour (default 24)
     smatool.havebutton = 0|1        # display "Run smatool" button for manual updates (default 1)
+    smatool.printstdout = 0|1       # print smatool stdout to stdout (default 0)
+    smatool.printstderr = 0|1       # print smatool stderr to stderr (default 1)
 
 Other (optional) properties are:
 

@@ -761,7 +761,27 @@ public class PVGraph extends ApplicationFrame {
     private static void runSmatool() throws IOException {
         String cmd = props.getProperty("smatool.cmd", "smatool");
         System.out.println("Executing " + cmd + " at " + new java.util.Date());
-        Runtime.getRuntime().exec(cmd);
+        Process p = Runtime.getRuntime().exec(cmd);
+        if(Integer.decode(props.getProperty("smatool.printstdout", "0")) != 0) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
+        if(Integer.decode(props.getProperty("smatool.printstderr", "1")) != 0) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String line;
+            while((line = br.readLine()) != null) {
+                System.err.println(line);
+            }
+        }
+        try {
+            p.waitFor();
+        }
+        catch (InterruptedException ie) {
+            // relax
+        }
     }
     
     public static void main (String[] args) {

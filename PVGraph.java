@@ -298,6 +298,15 @@ public class PVGraph extends ApplicationFrame {
             DateAxis axis = new DateAxis();
             axis.setLabel(plot.getDomainAxis().getLabel());
             axis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
+            GregorianCalendar lower = new GregorianCalendar();
+            lower.setTime(date.getTime());
+            lower.set(Calendar.HOUR_OF_DAY, 0);
+            lower.set(Calendar.MINUTE, 0);
+            lower.set(Calendar.SECOND, 0);
+            GregorianCalendar upper = new GregorianCalendar();
+            upper.setTime(lower.getTime());
+            upper.add(Calendar.DAY_OF_MONTH, 1);
+            axis.setRange(lower.getTime(), upper.getTime());
             plot.setDomainAxis(axis);
             
             return chart;   

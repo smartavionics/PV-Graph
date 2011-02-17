@@ -792,9 +792,9 @@ public class PVGraph extends ApplicationFrame {
         catch (IOException ioe) {
             // relax
         }
-        String user = props.getProperty("user");
-        String password = props.getProperty("password");
-        String url = props.getProperty("url");
+        String user = props.getProperty("mysql.user", props.getProperty("user"));
+        String password = props.getProperty("mysql.password", props.getProperty("password"));
+        String url = props.getProperty("mysql.url", props.getProperty("url"));
         Connection conn = null;
         try {
             Class.forName ("com.mysql.jdbc.Driver").newInstance();

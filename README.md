@@ -20,9 +20,9 @@ needs to know where the JFreeChart jars are and also the location of mysql-conne
 When PVGraph runs it needs a username, password and url for the MySQL connection. The easiest way to specify these
 is to create a **pvgraph.properties** file in the current directory which contains these properties:
 
-    user = USERNAME
-    password = PASSWORD
-    url = URL                       # e.g. jdbc:mysql://localhost/smatool
+    mysql.user = USERNAME
+    mysql.password = PASSWORD
+    mysql.url = URL                 # e.g. jdbc:mysql://localhost/smatool
     
 A basic cron-like capability to run smatool every now and then is configured with these properties:
     

@@ -696,11 +696,17 @@ public class PVGraph extends ApplicationFrame {
             for(YearsData yd : yearsData) {
                 String series = yd.inverter + (yearsData.size() > 1? ("-" + yd.serial) : "");
                 double lastPower = yd.startTotalPower;
+                int lastYear = 0;
                 for(Integer year : yd.powers.keySet()) {
                     double power = yd.powers.get(year);
                     dataset.addValue(power - lastPower, series, year);
                     lastPower = power;
+                    if(year > lastYear)
+                        lastYear = year;
                 }
+                // avoid "fat bars" when we only have data for a small number of years
+                for(int i = 0; (i + yd.powers.size()) < 10; ++i)
+                    dataset.addValue(0, series, new Integer(lastYear + i + 1));
                 totalPeriodPower += yd.endTotalPower - yd.startTotalPower;
             }
             

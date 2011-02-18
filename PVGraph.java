@@ -104,6 +104,25 @@ public class PVGraph extends ApplicationFrame {
         setContentPane(tabPane);
         pack();
         setVisible(true);
+        
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+                public boolean dispatchKeyEvent(KeyEvent ke) {
+                    Object src = ke.getSource();
+                    if(src instanceof JComponent && ((JComponent)src).getRootPane().getContentPane() == tabPane) {
+                        if(ke.getID() == KeyEvent.KEY_TYPED) {
+                            switch(ke.getKeyChar()) {
+                            case 17: // Ctrl-Q
+                                dispatchEvent(new WindowEvent(PVGraph.this, WindowEvent.WINDOW_CLOSING));
+                                return true;
+                            case 18: // Ctrl-R
+                                updateView();
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+        });
     }
     
     public void updateView() {

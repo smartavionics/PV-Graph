@@ -61,6 +61,14 @@ public class PVGraph extends ApplicationFrame {
         java.util.List<Integer> powers = new java.util.ArrayList<Integer>(12 * 24);
     };
 
+    private class YearsData {
+        String inverter;
+        String serial;
+        double startTotalPower;
+        double endTotalPower;
+        java.util.Map<Integer, Double> powers = new java.util.LinkedHashMap<Integer, Double>();
+    };
+
     private class PeriodData {
         String inverter;
         String serial;
@@ -84,10 +92,11 @@ public class PVGraph extends ApplicationFrame {
             graphs.add(this);
         }
 
-        views = new PVGraphView[3];
+        views = new PVGraphView[4];
         views[0] = new DayView();
         views[1] = new MonthView();
         views[2] = new YearView();
+        views[3] = new YearsView();
         
         tabPane = new JTabbedPane();
         for(PVGraphView v : views)
@@ -637,7 +646,105 @@ public class PVGraph extends ApplicationFrame {
             return chart;
         }
     }
-    
+  
+    private class YearsView implements PVGraphView {
+
+        ChartPanel yearsChartPanel;
+
+        public String getTabLabel() {
+            return "Years";
+        }
+                
+        public void updateChart() {
+            System.out.println("Updating years view for " + date.getTime());
+            yearsChartPanel.setChart(createChart());
+        }
+        
+        public JPanel makePanel() {
+            
+            JPanel yearsPanel = new JPanel();
+            yearsPanel.setLayout(new BoxLayout(yearsPanel, BoxLayout.Y_AXIS));
+            
+            yearsChartPanel = new ChartPanel(null);
+            yearsChartPanel.setFillZoomRectangle(true);
+            yearsChartPanel.setMouseWheelEnabled(true);
+            yearsChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            yearsPanel.add(yearsChartPanel);
+                                    
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setBorder(new EtchedBorder());
+            yearsPanel.add(buttonsPanel);
+                        
+            buttonsPanel.add(makeCommonButtonsPanel(this));
+            
+            yearsPanel.addComponentListener(new ComponentAdapter() {
+                    public void componentShown(ComponentEvent ce) {
+                        updateChart();
+                    }
+            });
+            
+            return yearsPanel;
+        }
+        
+        private JFreeChart createChart() {
+                        
+            java.util.List<YearsData> yearsData = getYearsData();
+            
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            double totalPeriodPower = 0;
+            
+            for(YearsData yd : yearsData) {
+                String series = yd.inverter + (yearsData.size() > 1? ("-" + yd.serial) : "");
+                double lastPower = yd.startTotalPower;
+                for(Integer year : yd.powers.keySet()) {
+                    double power = yd.powers.get(year);
+                    dataset.addValue(power - lastPower, series, year);
+                    lastPower = power;
+                }
+                totalPeriodPower += yd.endTotalPower - yd.startTotalPower;
+            }
+            
+            String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+            
+            JFreeChart chart = ChartFactory.createBarChart(
+                periodPower, // title
+                "Year",      // domain label
+                "KW",       // range label
+                dataset,    // data
+                PlotOrientation.VERTICAL,
+                true,       // create legend?
+                true,       // generate tooltips?
+                false       // generate URLs?
+                );
+            
+            chart.setBackgroundPaint(Color.white);
+            
+            CategoryPlot plot = (CategoryPlot)chart.getPlot();
+            plot.setBackgroundPaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.white);
+            plot.setRangeGridlinePaint(Color.white);
+            plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+            plot.setDomainCrosshairVisible(true);
+            plot.setRangeCrosshairVisible(true);
+            double maxPower = Double.parseDouble(props.getProperty("maxpower.years", "0"));
+            if(maxPower > 0) {
+                ValueAxis powerAxis = plot.getRangeAxis();
+                powerAxis.setAutoRange(false);
+                powerAxis.setLowerBound(0.0);
+                powerAxis.setUpperBound(maxPower);
+            }
+            
+            CategoryItemRenderer r = plot.getRenderer();
+            for(int i = 0; i < yearsData.size(); ++i) {
+                YearsData yd = yearsData.get(i);
+                String colour = props.getProperty("plotcolour." + yd.serial, props.getProperty("plotcolour", null));
+                if(colour != null)
+                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+            }
+            return chart;
+        }
+    }
+
     public void windowClosing(java.awt.event.WindowEvent event) {
         synchronized(graphs) {
             graphs.remove(this);
@@ -768,6 +875,43 @@ public class PVGraph extends ApplicationFrame {
             }
         }
         return new java.util.ArrayList<PeriodData>(result.values());
+    }
+
+    public java.util.List<YearsData> getYearsData() {
+        Statement stmt = null;
+        String query = "select * from DayData where CurrentPower != 0 order by DateTime";
+        Map<String, YearsData> result = new HashMap<String, YearsData>();
+        GregorianCalendar gc = new GregorianCalendar();
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                String serial = rs.getString("serial");
+                YearsData yd = result.get(serial);
+                if(yd == null) {
+                    yd = new YearsData();
+                    yd.serial = serial;
+                    yd.inverter = rs.getString("inverter");
+                    yd.startTotalPower = rs.getDouble("ETotalToday");
+                    result.put(serial, yd);
+                }
+                gc.setTime(rs.getTimestamp("DateTime"));
+                int year = gc.get(Calendar.YEAR);
+                double totalPower = rs.getDouble("ETotalToday");
+                yd.powers.put(year, totalPower);
+                yd.endTotalPower = totalPower;
+            }
+        } catch (SQLException e ) {
+            System.err.println("Query failed: " + e.getMessage());
+        } finally {
+            try {
+                stmt.close();
+            }
+            catch (SQLException e) {
+                // relax
+            }
+        }
+        return new java.util.ArrayList<YearsData>(result.values());
     }
     
     private static void runSmatool() throws IOException {

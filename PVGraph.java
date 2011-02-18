@@ -279,7 +279,7 @@ public class PVGraph extends ApplicationFrame {
                 totalDayPower += dd.endTotalPower - dd.startTotalPower;
             }
             
-            String dayPower = totalDayPower < 1.0? String.format("%d W", (int)(totalDayPower * 1000)) : String.format("%.3f KW", totalDayPower);
+            String dayPower = totalDayPower < 1.0? String.format("%d WH", (int)(totalDayPower * 1000)) : String.format("%.2f KWH", totalDayPower);
             JFreeChart chart = ChartFactory.createXYAreaChart(
                 day + " / " + month + " / " + year + "      " + dayPower, // title
                 "Time",     // x-axis label
@@ -448,12 +448,12 @@ public class PVGraph extends ApplicationFrame {
                 totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
             }
             
-            String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : String.format("%.1f KWH", totalPeriodPower);
             
             JFreeChart chart = ChartFactory.createBarChart(
                 month + " / " + year + "      " + periodPower, // title
                 "Day",      // domain label
-                "KW",       // range label
+                "KWH",       // range label
                 dataset,    // data
                 PlotOrientation.VERTICAL,
                 true,       // create legend?
@@ -590,12 +590,12 @@ public class PVGraph extends ApplicationFrame {
                 totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
             }
             
-            String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : String.format("%d KWH", (int)(totalPeriodPower + 0.5));
             
             JFreeChart chart = ChartFactory.createXYAreaChart(
                 year + "      " + periodPower, // title
                 (detailed? "Day" : "Month"),      // x-axis label
-                "KW",       // y-axis label
+                "KWH",       // y-axis label
                 dataset,    // data
                 PlotOrientation.VERTICAL,
                 true,       // create legend?
@@ -710,12 +710,12 @@ public class PVGraph extends ApplicationFrame {
                 totalPeriodPower += yd.endTotalPower - yd.startTotalPower;
             }
             
-            String periodPower = totalPeriodPower < 1.0? String.format("%d W", (int)(totalPeriodPower * 1000)) : String.format("%.3f KW", totalPeriodPower);
+            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : String.format("%d KWH", (int)(totalPeriodPower + 0.5));
             
             JFreeChart chart = ChartFactory.createBarChart(
                 periodPower, // title
                 "Year",      // domain label
-                "KW",       // range label
+                "KWH",       // range label
                 dataset,    // data
                 PlotOrientation.VERTICAL,
                 true,       // create legend?

@@ -46,7 +46,8 @@ public class PVGraph extends ApplicationFrame {
     
     static LinkedList<PVGraph> graphs = new LinkedList<PVGraph>();
     
-    private Connection conn;
+    static Connection conn;
+
     private Calendar date;
     private JTabbedPane tabPane;
     private boolean trackDay = true;
@@ -84,9 +85,8 @@ public class PVGraph extends ApplicationFrame {
         JPanel makePanel();
     }
     
-    public PVGraph(Connection conn) {
+    public PVGraph() {
         super("PV Power");
-        this.conn = conn;
         date = new GregorianCalendar();
         synchronized(graphs) {
             graphs.add(this);
@@ -138,7 +138,7 @@ public class PVGraph extends ApplicationFrame {
         JButton newGraphButton = new JButton("New Graph");
         newGraphButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    new PVGraph(conn);
+                    new PVGraph();
                 }
         });
 
@@ -976,12 +976,12 @@ public class PVGraph extends ApplicationFrame {
         String user = props.getProperty("mysql.user", props.getProperty("user"));
         String password = props.getProperty("mysql.password", props.getProperty("password"));
         String url = props.getProperty("mysql.url", props.getProperty("url"));
-        Connection conn = null;
         try {
             Class.forName ("com.mysql.jdbc.Driver").newInstance();
             conn = DriverManager.getConnection (url, user, password);
             System.out.println ("Database connection established");
-            new PVGraph(conn);
+            // create first window
+            new PVGraph();
             int smatoolPeriod = Integer.decode(props.getProperty("smatool.period", "0"));
             if(smatoolPeriod > 0) {
                 int smatoolStartHour = Integer.decode(props.getProperty("smatool.starthour", "0"));

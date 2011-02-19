@@ -792,6 +792,7 @@ public class PVGraph extends ApplicationFrame {
         String query = "select * from DayData where year(DateTime) = " + year + " and month(DateTime) = " + month + " and dayofmonth(DateTime) = " + day + " order by DateTime";
         Map<String, DayData> result = new HashMap<String, DayData>();
         try {
+            getDatabaseConnection();
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -827,6 +828,7 @@ public class PVGraph extends ApplicationFrame {
         Map<String, PeriodData> result = new HashMap<String, PeriodData>();
         GregorianCalendar gc = new GregorianCalendar();
         try {
+            getDatabaseConnection();
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -868,6 +870,7 @@ public class PVGraph extends ApplicationFrame {
         Map<String, PeriodData> result = new HashMap<String, PeriodData>();
         GregorianCalendar gc = new GregorianCalendar();
         try {
+            getDatabaseConnection();
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -908,6 +911,7 @@ public class PVGraph extends ApplicationFrame {
         Map<String, YearsData> result = new HashMap<String, YearsData>();
         GregorianCalendar gc = new GregorianCalendar();
         try {
+            getDatabaseConnection();
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -965,6 +969,16 @@ public class PVGraph extends ApplicationFrame {
         }
     }
     
+    private static void getDatabaseConnection() throws SQLException {
+        if(conn == null || !conn.isValid(30)) {
+            String user = props.getProperty("mysql.user", props.getProperty("user"));
+            String password = props.getProperty("mysql.password", props.getProperty("password"));
+            String url = props.getProperty("mysql.url", props.getProperty("url"));
+            conn = DriverManager.getConnection(url, user, password);
+            System.out.println ("Database connection established");
+        }
+    }
+
     public static void main (String[] args) {
         props = new Properties(System.getProperties());
         try {
@@ -973,13 +987,17 @@ public class PVGraph extends ApplicationFrame {
         catch (IOException ioe) {
             // relax
         }
-        String user = props.getProperty("mysql.user", props.getProperty("user"));
-        String password = props.getProperty("mysql.password", props.getProperty("password"));
-        String url = props.getProperty("mysql.url", props.getProperty("url"));
         try {
             Class.forName ("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection (url, user, password);
-            System.out.println ("Database connection established");
+            getDatabaseConnection();
+        }
+        catch (SQLException e) {
+            System.err.println("Cannot establish database connection: " + e.getMessage());
+        }
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        if(conn != null) {
             // create first window
             new PVGraph();
             int smatoolPeriod = Integer.decode(props.getProperty("smatool.period", "0"));
@@ -1009,12 +1027,6 @@ public class PVGraph extends ApplicationFrame {
                     }
                 }
             }
-        }
-        catch (SQLException e) {
-            System.err.println("Cannot connect to " + url + ": " + e.getMessage());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

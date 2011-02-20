@@ -132,11 +132,20 @@ public class PVGraph extends ApplicationFrame {
                     if(src instanceof JComponent && ((JComponent)src).getRootPane().getContentPane() == tabPane) {
                         if(ke.getID() == KeyEvent.KEY_TYPED) {
                             switch(ke.getKeyChar()) {
-                            case 17: // Ctrl-Q
+                            case 'D' - 0x40:
+                                tabPane.setSelectedIndex(DAY_VIEW_INDEX);
+                                return true;
+                            case 'M' - 0x40:
+                                tabPane.setSelectedIndex(MONTH_VIEW_INDEX);
+                                return true;
+                            case 'Q' - 0x40:
                                 dispatchEvent(new WindowEvent(PVGraph.this, WindowEvent.WINDOW_CLOSING));
                                 return true;
-                            case 18: // Ctrl-R
+                            case 'R' - 0x40:
                                 updateView();
+                                return true;
+                            case 'Y' - 0x40:
+                                tabPane.setSelectedIndex(YEAR_VIEW_INDEX);
                                 return true;
                             }
                         }

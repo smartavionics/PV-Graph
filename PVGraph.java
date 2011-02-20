@@ -27,8 +27,12 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -63,6 +67,11 @@ public class PVGraph extends ApplicationFrame {
     private JTabbedPane tabPane;
     private boolean trackDay = true;
     private PVGraphView[] views;
+    
+    static final int DAY_VIEW_INDEX   = 0;
+    static final int MONTH_VIEW_INDEX = 1;
+    static final int YEAR_VIEW_INDEX  = 2;
+    static final int YEARS_VIEW_INDEX = 3;
     
     private class DayData {
         String inverter;
@@ -104,10 +113,10 @@ public class PVGraph extends ApplicationFrame {
         }
 
         views = new PVGraphView[4];
-        views[0] = new DayView();
-        views[1] = new MonthView();
-        views[2] = new YearView();
-        views[3] = new YearsView();
+        views[DAY_VIEW_INDEX] = new DayView();
+        views[MONTH_VIEW_INDEX] = new MonthView();
+        views[YEAR_VIEW_INDEX] = new YearView();
+        views[YEARS_VIEW_INDEX] = new YearsView();
         
         tabPane = new JTabbedPane();
         for(PVGraphView v : views)
@@ -393,6 +402,16 @@ public class PVGraph extends ApplicationFrame {
             monthChartPanel.setFillZoomRectangle(true);
             monthChartPanel.setMouseWheelEnabled(true);
             monthChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            monthChartPanel.addChartMouseListener(new ChartMouseListener() {
+                    public void chartMouseMoved(ChartMouseEvent cme) { }
+                    public void chartMouseClicked(ChartMouseEvent cme) {
+                        ChartEntity entity = cme.getEntity();
+                        if(entity != null && entity instanceof CategoryItemEntity) {
+                            date.set(Calendar.DAY_OF_MONTH, (Integer)((CategoryItemEntity)entity).getColumnKey());
+                            tabPane.setSelectedIndex(DAY_VIEW_INDEX);
+                        }
+                    }
+            });
             monthPanel.add(monthChartPanel);
             
             JButton monthDecButton = new JButton("-");
@@ -469,7 +488,7 @@ public class PVGraph extends ApplicationFrame {
                 double lastPower = pd.startTotalPower;
                 for(int i = 0; i < pd.numPowers; ++i) {
                     if(pd.powers[i] != 0) {
-                        dataset.addValue(pd.powers[i] - lastPower, series, "" + (i + 1));
+                        dataset.addValue(pd.powers[i] - lastPower, series, (Integer)(i + 1));
                         lastPower = pd.powers[i];
                     }
                     else
@@ -498,8 +517,8 @@ public class PVGraph extends ApplicationFrame {
             plot.setDomainGridlinePaint(Color.white);
             plot.setRangeGridlinePaint(Color.white);
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-            plot.setDomainCrosshairVisible(true);
-            plot.setRangeCrosshairVisible(true);
+            //plot.setDomainCrosshairVisible(true);
+            //plot.setRangeCrosshairVisible(true);
             double maxPower = Double.parseDouble(props.getProperty("maxpower.month", "0"));
             if(maxPower > 0) {
                 ValueAxis powerAxis = plot.getRangeAxis();
@@ -699,6 +718,16 @@ public class PVGraph extends ApplicationFrame {
             yearsChartPanel.setFillZoomRectangle(true);
             yearsChartPanel.setMouseWheelEnabled(true);
             yearsChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            yearsChartPanel.addChartMouseListener(new ChartMouseListener() {
+                    public void chartMouseMoved(ChartMouseEvent cme) { }
+                    public void chartMouseClicked(ChartMouseEvent cme) {
+                        ChartEntity entity = cme.getEntity();
+                        if(entity != null && entity instanceof CategoryItemEntity) {
+                            date.set(Calendar.YEAR, (Integer)((CategoryItemEntity)entity).getColumnKey());
+                            tabPane.setSelectedIndex(YEAR_VIEW_INDEX);
+                        }
+                    }
+            });
             yearsPanel.add(yearsChartPanel);
                                     
             JPanel buttonsPanel = new JPanel();
@@ -760,8 +789,8 @@ public class PVGraph extends ApplicationFrame {
             plot.setDomainGridlinePaint(Color.white);
             plot.setRangeGridlinePaint(Color.white);
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-            plot.setDomainCrosshairVisible(true);
-            plot.setRangeCrosshairVisible(true);
+            //plot.setDomainCrosshairVisible(true);
+            //plot.setRangeCrosshairVisible(true);
             double maxPower = Double.parseDouble(props.getProperty("maxpower.years", "0"));
             if(maxPower > 0) {
                 ValueAxis powerAxis = plot.getRangeAxis();

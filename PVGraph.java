@@ -104,6 +104,7 @@ public class PVGraph extends ApplicationFrame {
         void updateChart();
         String getTabLabel();
         JPanel makePanel();
+        boolean handleKey(int charCode);
     }
     
     public PVGraph() {
@@ -132,11 +133,14 @@ public class PVGraph extends ApplicationFrame {
                     if(src instanceof JComponent && ((JComponent)src).getRootPane().getContentPane() == tabPane) {
                         if(ke.getID() == KeyEvent.KEY_TYPED) {
                             switch(ke.getKeyChar()) {
-                            case 'D' - 0x40:
+                            case 'd':
                                 tabPane.setSelectedIndex(DAY_VIEW_INDEX);
                                 return true;
-                            case 'M' - 0x40:
+                            case 'm':
                                 tabPane.setSelectedIndex(MONTH_VIEW_INDEX);
+                                return true;
+                            case 'N' - 0x40:
+                                new PVGraph();
                                 return true;
                             case 'Q' - 0x40:
                                 dispatchEvent(new WindowEvent(PVGraph.this, WindowEvent.WINDOW_CLOSING));
@@ -144,9 +148,23 @@ public class PVGraph extends ApplicationFrame {
                             case 'R' - 0x40:
                                 updateView();
                                 return true;
-                            case 'Y' - 0x40:
+                            case 'S':
+                                try {
+                                    runSmatool();
+                                    updateView();
+                                }
+                                catch (IOException ioe) {
+                                    System.err.println(ioe.getMessage());
+                                }
+                                return true;
+                            case 'y':
                                 tabPane.setSelectedIndex(YEAR_VIEW_INDEX);
                                 return true;
+                            case 'Y':
+                                tabPane.setSelectedIndex(YEARS_VIEW_INDEX);
+                                return true;
+                            default:
+                                return views[tabPane.getSelectedIndex()].handleKey(ke.getKeyChar());
                             }
                         }
                     }
@@ -215,6 +233,20 @@ public class PVGraph extends ApplicationFrame {
         public void updateChart() {
             System.out.println("Updating day view for " + date.getTime());
             dayChartPanel.setChart(createChart());
+        }
+        
+        public boolean handleKey(int charCode) {
+            if(charCode == '+' || charCode == '=') {
+                date.add(Calendar.DAY_OF_MONTH, 1);
+                updateChart();
+                return true;
+            }
+            if(charCode == '-') {
+                date.add(Calendar.DAY_OF_MONTH, -1);
+                updateChart();
+                return true;
+            }
+            return false;
         }
         
         public JPanel makePanel() {
@@ -403,6 +435,20 @@ public class PVGraph extends ApplicationFrame {
             monthChartPanel.setChart(createChart());
         }
         
+        public boolean handleKey(int charCode) {
+            if(charCode == '+' || charCode == '=') {
+                date.add(Calendar.MONTH, 1);
+                updateChart();
+                return true;
+            }
+            if(charCode == '-') {
+                date.add(Calendar.MONTH, -1);
+                updateChart();
+                return true;
+            }
+            return false;
+        }
+        
         public JPanel makePanel() {
             
             JPanel monthPanel = new JPanel();
@@ -560,6 +606,20 @@ public class PVGraph extends ApplicationFrame {
         public void updateChart() {
             System.out.println("Updating year view for " + date.getTime());
             yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+        }
+        
+        public boolean handleKey(int charCode) {
+            if(charCode == '+' || charCode == '=') {
+                date.add(Calendar.YEAR, 1);
+                updateChart();
+                return true;
+            }
+            if(charCode == '-') {
+                date.add(Calendar.YEAR, -1);
+                updateChart();
+                return true;
+            }
+            return false;
         }
         
         public JPanel makePanel() {
@@ -735,6 +795,10 @@ public class PVGraph extends ApplicationFrame {
             yearsChartPanel.setChart(createChart());
         }
         
+        public boolean handleKey(int charCode) {
+            return false;
+        }
+
         public JPanel makePanel() {
             
             JPanel yearsPanel = new JPanel();

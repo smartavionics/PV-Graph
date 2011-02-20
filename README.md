@@ -42,5 +42,25 @@ Other (optional) properties are:
     plotcolour = 0x00RRGGBB         # colour of plots for all inverters
     plotcolour.SERIAL = 0x00RRGGBB  # colour of plot for a single inverter (specified by SERIAL)
     
-Right hand mouse button above a graph pops up a context menu, mouse scroll wheel zooms and ctrl-mousebutton pans.
+Right hand mouse button above a graph pops up a context menu, mouse scroll wheel zooms and ctrl-mouse1 pans.
+
+Currently, the key bindings are:
+
+d    show day view
+m    show month view
+y    show year view
+Y    show years view
+
+S    run smatool and update view
+
+-    show previous day/month/year
++    show next day/month/year
+
+C-n  open new window
+C-q  close current window
+C-r  update current view
+
+Tab/S-Tab  move focus
+Space      activate button
+Arrow keys change tab (when tab pane has focus)
 

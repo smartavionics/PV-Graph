@@ -46,21 +46,21 @@ Right hand mouse button above a graph pops up a context menu, mouse scroll wheel
 
 Currently, the key bindings are:
 
-d    show day view
-m    show month view
-y    show year view
-Y    show years view
+    d    show day view
+    m    show month view
+    y    show year view
+    Y    show years view
 
-S    run smatool and update view
+    S    run smatool and update view
 
--    show previous day/month/year
-+    show next day/month/year
+    -    show previous day/month/year
+    +    show next day/month/year
 
-C-n  open new window
-C-q  close current window
-C-r  update current view
+    C-n  open new window
+    C-q  close current window
+    C-r  update current view
 
-Tab/S-Tab  move focus
-Space      activate button
-Arrow keys change tab (when tab pane has focus)
+    Tab/S-Tab  move focus
+    Space      activate button
+    Arrow keys change tab (when tab pane has focus)
 

@@ -32,6 +32,7 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -561,6 +562,22 @@ public class PVGraph extends ApplicationFrame {
             yearChartPanel.setFillZoomRectangle(true);
             yearChartPanel.setMouseWheelEnabled(true);
             yearChartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
+            yearChartPanel.addChartMouseListener(new ChartMouseListener() {
+                    public void chartMouseMoved(ChartMouseEvent cme) { }
+                    public void chartMouseClicked(ChartMouseEvent cme) {
+                        ChartEntity entity = cme.getEntity();
+                        if(entity != null && entity instanceof XYItemEntity) {
+                            if(detailedButton.isSelected()) {
+                                date.set(Calendar.DAY_OF_YEAR, (Integer)(((XYItemEntity)entity).getItem() + 1));
+                                tabPane.setSelectedIndex(DAY_VIEW_INDEX);
+                            }
+                            else {
+                                date.set(Calendar.MONTH, (Integer)((XYItemEntity)entity).getItem());
+                                tabPane.setSelectedIndex(MONTH_VIEW_INDEX);
+                            }
+                        }
+                    }
+            });
             yearPanel.add(yearChartPanel);
             
             detailedButton = new JRadioButton("Detailed");

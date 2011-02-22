@@ -20,11 +20,14 @@ import java.io.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 
 import java.text.SimpleDateFormat;
 
 import javax.swing.*;
 import javax.swing.border.*;
+
+import javax.imageio.ImageIO;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -127,6 +130,14 @@ public class PVGraph extends ApplicationFrame {
             tabPane.addTab(v.getTabLabel(), v.makePanel());
         setContentPane(tabPane);
         pack();
+        try {
+            java.net.URL url = getClass().getResource("sun.png");
+            if(url != null)
+                setIconImage(ImageIO.read(url));
+        }
+        catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        };
         setVisible(true);
         
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {

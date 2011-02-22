@@ -539,9 +539,12 @@ public class PVGraph extends ApplicationFrame {
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
             double totalPeriodPower = 0;
             
+            int numPowers = 0;
             for(PeriodData pd : periodData) {
                 String series = pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : "");
                 double lastPower = pd.startTotalPower;
+                if(pd.numPowers > numPowers)
+                    numPowers = pd.numPowers;
                 for(int i = 0; i < pd.numPowers; ++i) {
                     if(pd.powers[i] != 0) {
                         dataset.addValue(pd.powers[i] - lastPower, series, (Integer)(i + 1));
@@ -554,6 +557,10 @@ public class PVGraph extends ApplicationFrame {
             }
             
             String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : String.format("%.1f KWH", totalPeriodPower);
+            if(numPowers > 0) {
+                double avg = totalPeriodPower / numPowers;
+                periodPower += "      " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
+            }
             
             JFreeChart chart = ChartFactory.createBarChart(
                 month + " / " + year + "      " + periodPower, // title

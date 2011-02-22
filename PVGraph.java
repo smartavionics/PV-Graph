@@ -69,6 +69,8 @@ public class PVGraph extends ApplicationFrame {
     private boolean trackDay = true;
     private PVGraphView[] views;
     
+    static final String WINDOW_TITLE_PREFIX = "PVGraph";
+
     static final int DAY_VIEW_INDEX   = 0;
     static final int MONTH_VIEW_INDEX = 1;
     static final int YEAR_VIEW_INDEX  = 2;
@@ -108,7 +110,7 @@ public class PVGraph extends ApplicationFrame {
     }
     
     public PVGraph() {
-        super("PV Power");
+        super(WINDOW_TITLE_PREFIX);
         date = new GregorianCalendar();
         synchronized(graphs) {
             graphs.add(this);
@@ -230,9 +232,17 @@ public class PVGraph extends ApplicationFrame {
             return "Day";
         }
         
+        public void setWindowTitle() {
+            int year = date.get(Calendar.YEAR);
+            int month = date.get(Calendar.MONTH) + 1;
+            int day = date.get(Calendar.DAY_OF_MONTH);
+            setTitle(WINDOW_TITLE_PREFIX + " - " + day + " / " + month + " / " + year);
+        }
+
         public void updateChart() {
             System.out.println("Updating day view for " + date.getTime());
             dayChartPanel.setChart(createChart());
+            setWindowTitle();
         }
         
         public boolean handleKey(int charCode) {
@@ -429,10 +439,17 @@ public class PVGraph extends ApplicationFrame {
         public String getTabLabel() {
             return "Month";
         }
+        
+        public void setWindowTitle() {
+            int year = date.get(Calendar.YEAR);
+            int month = date.get(Calendar.MONTH) + 1;
+            setTitle(WINDOW_TITLE_PREFIX + " - " + month + " / " + year);
+        }
                 
         public void updateChart() {
             System.out.println("Updating month view for " + date.getTime());
             monthChartPanel.setChart(createChart());
+            setWindowTitle();
         }
         
         public boolean handleKey(int charCode) {
@@ -610,9 +627,15 @@ public class PVGraph extends ApplicationFrame {
             return "Year";
         }
         
+        public void setWindowTitle() {
+            int year = date.get(Calendar.YEAR);
+            setTitle(WINDOW_TITLE_PREFIX + " - " + year);
+        }
+        
         public void updateChart() {
             System.out.println("Updating year view for " + date.getTime());
             yearChartPanel.setChart(createChart(detailedButton.isSelected()));
+            setWindowTitle();
         }
         
         public boolean handleKey(int charCode) {
@@ -796,10 +819,15 @@ public class PVGraph extends ApplicationFrame {
         public String getTabLabel() {
             return "Years";
         }
-                
+        
+        public void setWindowTitle() {
+            setTitle(WINDOW_TITLE_PREFIX);
+        }
+        
         public void updateChart() {
             System.out.println("Updating years view for " + date.getTime());
             yearsChartPanel.setChart(createChart());
+            setWindowTitle();
         }
         
         public boolean handleKey(int charCode) {

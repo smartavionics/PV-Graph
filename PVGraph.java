@@ -742,6 +742,7 @@ public class PVGraph extends ApplicationFrame {
             TimeSeriesCollection dataset = new TimeSeriesCollection();
             double totalPeriodPower = 0;
             
+            int indexOfLastNonZeroPower = 0;
             for(PeriodData pd : periodData) {
                 TimeSeries s = new TimeSeries(pd.inverter + (periodData.size() > 1? ("-" + pd.serial) : ""));
                 dataset.addSeries(s);
@@ -751,6 +752,8 @@ public class PVGraph extends ApplicationFrame {
                     if(pd.powers[i] != 0) {
                         power = pd.powers[i] - lastPower;
                         lastPower = pd.powers[i];
+                        if(i > indexOfLastNonZeroPower)
+                            indexOfLastNonZeroPower = i;
                     }
                     if(detailed) {
                         GregorianCalendar gc = new GregorianCalendar();
@@ -765,6 +768,13 @@ public class PVGraph extends ApplicationFrame {
             }
             
             String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : String.format("%d KWH", (int)(totalPeriodPower + 0.5));
+            double avg = totalPeriodPower / (indexOfLastNonZeroPower + 1);
+            if(detailed) {
+                periodPower += "      " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
+            }
+            else {
+                periodPower += "      " + (avg < 1.0? String.format("%d WH/Month", (int)(avg * 1000)) : String.format("%.2f KWH/Month", avg));
+            }
             
             JFreeChart chart = ChartFactory.createXYAreaChart(
                 year + "      " + periodPower, // title

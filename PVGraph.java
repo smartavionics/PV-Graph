@@ -244,10 +244,7 @@ public class PVGraph extends ApplicationFrame {
         }
         
         public void setWindowTitle() {
-            int year = date.get(Calendar.YEAR);
-            int month = date.get(Calendar.MONTH) + 1;
-            int day = date.get(Calendar.DAY_OF_MONTH);
-            setTitle(WINDOW_TITLE_PREFIX + " - " + day + " / " + month + " / " + year);
+            setTitle(WINDOW_TITLE_PREFIX + " - " + new SimpleDateFormat("MMMMM d yyyy").format(date.getTime())); 
         }
 
         public void updateChart() {
@@ -383,7 +380,7 @@ public class PVGraph extends ApplicationFrame {
             
             String dayPower = totalDayPower < 1.0? String.format("%d WH", (int)(totalDayPower * 1000)) : String.format("%.2f KWH", totalDayPower);
             JFreeChart chart = ChartFactory.createXYAreaChart(
-                day + " / " + month + " / " + year + "      " + dayPower, // title
+                new SimpleDateFormat("MMMMM d yyyy").format(date.getTime()) + "      " + dayPower, // title
                 "Time",     // x-axis label
                 "Watts",    // y-axis label
                 dataset,    // data
@@ -452,9 +449,7 @@ public class PVGraph extends ApplicationFrame {
         }
         
         public void setWindowTitle() {
-            int year = date.get(Calendar.YEAR);
-            int month = date.get(Calendar.MONTH) + 1;
-            setTitle(WINDOW_TITLE_PREFIX + " - " + month + " / " + year);
+            setTitle(WINDOW_TITLE_PREFIX + " - " + new SimpleDateFormat("MMMMM yyyy").format(date.getTime()));
         }
                 
         public void updateChart() {
@@ -589,7 +584,7 @@ public class PVGraph extends ApplicationFrame {
             periodPower += "      " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
             
             JFreeChart chart = ChartFactory.createBarChart(
-                month + " / " + year + "      " + periodPower, // title
+                new SimpleDateFormat("MMMMM yyyy").format(date.getTime()) + "      " + periodPower, // title
                 "Day",      // domain label
                 "KWH",       // range label
                 dataset,    // data

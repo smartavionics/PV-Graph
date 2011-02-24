@@ -69,7 +69,7 @@ public class PVGraph extends ApplicationFrame {
 
     private Calendar date;
     private JTabbedPane tabPane;
-    private boolean trackDay = true;
+    private boolean trackDay = false;
     private PVGraphView[] views;
     
     static final String WINDOW_TITLE_PREFIX = "PVGraph";

@@ -158,7 +158,7 @@ public class PVGraph extends ApplicationFrame {
                                 tabPane.setSelectedIndex(MONTH_VIEW_INDEX);
                                 return true;
                             case 'N' - 0x40:
-                                new PVGraph();
+                                new PVGraph((Calendar)PVGraph.this.date.clone(), tabPane.getSelectedIndex());
                                 return true;
                             case 'Q' - 0x40:
                                 dispatchEvent(new WindowEvent(PVGraph.this, WindowEvent.WINDOW_CLOSING));
@@ -204,7 +204,7 @@ public class PVGraph extends ApplicationFrame {
         JButton newGraphButton = new JButton("New Graph");
         newGraphButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    new PVGraph();
+                    new PVGraph((Calendar)PVGraph.this.date.clone(), tabPane.getSelectedIndex());
                 }
         });
 

@@ -111,10 +111,14 @@ public class PVGraph extends ApplicationFrame {
         JPanel makePanel();
         boolean handleKey(int charCode);
     }
-    
+
     public PVGraph() {
+        this(new GregorianCalendar(), DAY_VIEW_INDEX);
+    }
+
+    public PVGraph(Calendar date, int initialViewIndex) {
         super(WINDOW_TITLE_PREFIX);
-        date = new GregorianCalendar();
+        this.date = date;
         synchronized(graphs) {
             graphs.add(this);
         }
@@ -128,6 +132,7 @@ public class PVGraph extends ApplicationFrame {
         tabPane = new JTabbedPane();
         for(PVGraphView v : views)
             tabPane.addTab(v.getTabLabel(), v.makePanel());
+        tabPane.setSelectedIndex(initialViewIndex);
         setContentPane(tabPane);
         pack();
         try {

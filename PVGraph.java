@@ -491,8 +491,9 @@ public class PVGraph extends ApplicationFrame {
                     public void chartMouseClicked(ChartMouseEvent cme) {
                         ChartEntity entity = cme.getEntity();
                         if(entity != null && entity instanceof CategoryItemEntity) {
-                            date.set(Calendar.DAY_OF_MONTH, (Integer)((CategoryItemEntity)entity).getColumnKey());
-                            tabPane.setSelectedIndex(DAY_VIEW_INDEX);
+                            Calendar d = (Calendar)date.clone();
+                            d.set(Calendar.DAY_OF_MONTH, (Integer)((CategoryItemEntity)entity).getColumnKey());
+                            new PVGraph(d, DAY_VIEW_INDEX);
                         }
                     }
             });
@@ -675,13 +676,14 @@ public class PVGraph extends ApplicationFrame {
                     public void chartMouseClicked(ChartMouseEvent cme) {
                         ChartEntity entity = cme.getEntity();
                         if(entity != null && entity instanceof XYItemEntity) {
+                            Calendar d = (Calendar)date.clone();
                             if(detailedButton.isSelected()) {
-                                date.set(Calendar.DAY_OF_YEAR, (Integer)(((XYItemEntity)entity).getItem() + 1));
-                                tabPane.setSelectedIndex(DAY_VIEW_INDEX);
+                                d.set(Calendar.DAY_OF_YEAR, (Integer)(((XYItemEntity)entity).getItem() + 1));
+                                new PVGraph(d, DAY_VIEW_INDEX);
                             }
                             else {
-                                date.set(Calendar.MONTH, (Integer)((XYItemEntity)entity).getItem());
-                                tabPane.setSelectedIndex(MONTH_VIEW_INDEX);
+                                d.set(Calendar.MONTH, (Integer)((XYItemEntity)entity).getItem());
+                                new PVGraph(d, MONTH_VIEW_INDEX);
                             }
                         }
                     }
@@ -867,8 +869,9 @@ public class PVGraph extends ApplicationFrame {
                     public void chartMouseClicked(ChartMouseEvent cme) {
                         ChartEntity entity = cme.getEntity();
                         if(entity != null && entity instanceof CategoryItemEntity) {
-                            date.set(Calendar.YEAR, (Integer)((CategoryItemEntity)entity).getColumnKey());
-                            tabPane.setSelectedIndex(YEAR_VIEW_INDEX);
+                            Calendar d = (Calendar)date.clone();
+                            d.set(Calendar.YEAR, (Integer)((CategoryItemEntity)entity).getColumnKey());
+                            new PVGraph(d, YEAR_VIEW_INDEX);
                         }
                     }
             });

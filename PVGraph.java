@@ -253,7 +253,7 @@ public class PVGraph extends ApplicationFrame {
         }
 
         public void updateChart() {
-            System.out.println("Updating day view for " + date.getTime());
+            //System.out.println("Updating day view for " + date.getTime());
             dayChartPanel.setChart(createChart());
             setWindowTitle();
         }
@@ -458,7 +458,7 @@ public class PVGraph extends ApplicationFrame {
         }
                 
         public void updateChart() {
-            System.out.println("Updating month view for " + date.getTime());
+            //System.out.println("Updating month view for " + date.getTime());
             monthChartPanel.setChart(createChart());
             setWindowTitle();
         }
@@ -643,7 +643,7 @@ public class PVGraph extends ApplicationFrame {
         }
         
         public void updateChart() {
-            System.out.println("Updating year view for " + date.getTime());
+            //System.out.println("Updating year view for " + date.getTime());
             yearChartPanel.setChart(createChart(detailedButton.isSelected()));
             setWindowTitle();
         }
@@ -846,7 +846,7 @@ public class PVGraph extends ApplicationFrame {
         }
         
         public void updateChart() {
-            System.out.println("Updating years view for " + date.getTime());
+            //System.out.println("Updating years view for " + date.getTime());
             yearsChartPanel.setChart(createChart());
             setWindowTitle();
         }

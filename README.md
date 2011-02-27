@@ -39,8 +39,10 @@ Other (optional) properties are:
     maxpower.day = NUM              # sets upper limit on power axis (KW) - by default, graphs auto-scale
     maxpower.month = NUM
     maxpower.year = NUM
-    plotcolour = 0x00RRGGBB         # colour of plots for all inverters
-    plotcolour.SERIAL = 0x00RRGGBB  # colour of plot for a single inverter (specified by SERIAL)
+    colour.plot = 0x00RRGGBB        # colour of plots for all inverters (colour name or hex RGB)
+    colour.plot.SERIAL = 0x00RRGGBB # colour of plot for a single inverter (specified by SERIAL, colour name or hex RGB)
+    colour.background = COLOUR      # colour of plot background (colour name or hex RGB, default is LIGHT_GRAY)
+    colour.chart = COLOUR           # colour of chart outside of plot area (colour name or hex RGB, default is WHITE)
     
 Right hand mouse button above a graph pops up a context menu, mouse scroll wheel zooms and ctrl-mouse1 pans.
 

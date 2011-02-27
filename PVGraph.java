@@ -1166,6 +1166,14 @@ public class PVGraph extends ApplicationFrame {
         }
     }
 
+    public static Color getColour(String colourName) {
+        try {
+            return (Color)Class.forName("java.awt.Color").getField(colourName).get(null);
+        } catch (Exception e) {
+            return Color.decode(colourName);
+        }
+    }
+
     public static void main (String[] args) {
         props = new Properties(System.getProperties());
         try {

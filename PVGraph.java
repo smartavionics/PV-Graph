@@ -426,9 +426,13 @@ public class PVGraph extends ApplicationFrame {
             r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
             for(int i = 0; i < dayData.size(); ++i) {
                 DayData dd = dayData.get(i);
-                String colour = props.getProperty("plotcolour." + dd.serial, props.getProperty("plotcolour", null));
+                String colour = props.getProperty("colour.plot." + dd.serial, props.getProperty("colour.plot", null));
+                if(colour == null) {
+                    // maintain backwards compatibility
+                    colour = props.getProperty("plotcolour." + dd.serial, props.getProperty("plotcolour", null));
+                }
                 if(colour != null)
-                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+                    r.setSeriesPaint(i, getColour(colour));
             }
             
             DateAxis axis = new DateAxis();
@@ -628,9 +632,13 @@ public class PVGraph extends ApplicationFrame {
             CategoryItemRenderer r = plot.getRenderer();
             for(int i = 0; i < periodData.size(); ++i) {
                 PeriodData pd = periodData.get(i);
-                String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+                String colour = props.getProperty("colour.plot." + pd.serial, props.getProperty("colour.plot", null));
+                if(colour == null) {
+                    // maintain backwards compatibility
+                    colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+                }
                 if(colour != null)
-                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+                    r.setSeriesPaint(i, getColour(colour));
             }
             return chart;   
         }
@@ -828,9 +836,13 @@ public class PVGraph extends ApplicationFrame {
             r.setBaseToolTipGenerator(StandardXYToolTipGenerator.getTimeSeriesInstance());
             for(int i = 0; i < periodData.size(); ++i) {
                 PeriodData pd = periodData.get(i);
-                String colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+                String colour = props.getProperty("colour.plot." + pd.serial, props.getProperty("colour.plot", null));
+                if(colour == null) {
+                    // maintain backwards compatibility
+                    colour = props.getProperty("plotcolour." + pd.serial, props.getProperty("plotcolour", null));
+                }
                 if(colour != null)
-                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+                    r.setSeriesPaint(i, getColour(colour));
             }
             
             DateAxis axis = new DateAxis();
@@ -965,9 +977,13 @@ public class PVGraph extends ApplicationFrame {
             CategoryItemRenderer r = plot.getRenderer();
             for(int i = 0; i < yearsData.size(); ++i) {
                 YearsData yd = yearsData.get(i);
-                String colour = props.getProperty("plotcolour." + yd.serial, props.getProperty("plotcolour", null));
+                String colour = props.getProperty("colour.plot." + yd.serial, props.getProperty("colour.plot", null));
+                if(colour == null) {
+                    // maintain backwards compatibility
+                    colour = props.getProperty("plotcolour." + yd.serial, props.getProperty("plotcolour", null));
+                }
                 if(colour != null)
-                    r.setSeriesPaint(i, new Color(Integer.decode(colour)));
+                    r.setSeriesPaint(i, getColour(colour));
             }
             return chart;
         }

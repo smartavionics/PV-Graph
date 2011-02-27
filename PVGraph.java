@@ -395,12 +395,16 @@ public class PVGraph extends ApplicationFrame {
                 false       // generate URLs?
                 );
             
-            chart.setBackgroundPaint(Color.white);
+            String chartColour = props.getProperty("colour.chart", "WHITE");
+            if(chartColour != null)
+                chart.setBackgroundPaint(getColour(chartColour));
             
             XYPlot plot = (XYPlot) chart.getPlot();
             if(dayData.size() == 1)
                 plot.setForegroundAlpha(1.0f);
-            plot.setBackgroundPaint(Color.lightGray);
+            String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
+            if(backgroundColour != null)
+                plot.setBackgroundPaint(getColour(backgroundColour));
             plot.setDomainGridlinePaint(Color.white);
             plot.setRangeGridlinePaint(Color.white);
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
@@ -600,10 +604,14 @@ public class PVGraph extends ApplicationFrame {
                 false       // generate URLs?
                 );
             
-            chart.setBackgroundPaint(Color.white);
+            String chartColour = props.getProperty("colour.chart", "WHITE");
+            if(chartColour != null)
+                chart.setBackgroundPaint(getColour(chartColour));
             
             CategoryPlot plot = (CategoryPlot)chart.getPlot();
-            plot.setBackgroundPaint(Color.lightGray);
+            String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
+            if(backgroundColour != null)
+                plot.setBackgroundPaint(getColour(backgroundColour));
             plot.setDomainGridlinePaint(Color.white);
             plot.setRangeGridlinePaint(Color.white);
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
@@ -789,12 +797,16 @@ public class PVGraph extends ApplicationFrame {
                 false       // generate URLs?
                 );
             
-            chart.setBackgroundPaint(Color.white);
+            String chartColour = props.getProperty("colour.chart", "WHITE");
+            if(chartColour != null)
+                chart.setBackgroundPaint(getColour(chartColour));
             
             XYPlot plot = (XYPlot) chart.getPlot();
             if(periodData.size() == 1)
                 plot.setForegroundAlpha(1.0f);
-            plot.setBackgroundPaint(Color.lightGray);
+            String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
+            if(backgroundColour != null)
+                plot.setBackgroundPaint(getColour(backgroundColour));
             plot.setDomainGridlinePaint(Color.white);
             plot.setRangeGridlinePaint(Color.white);
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
@@ -929,10 +941,14 @@ public class PVGraph extends ApplicationFrame {
                 false       // generate URLs?
                 );
             
-            chart.setBackgroundPaint(Color.white);
+            String chartColour = props.getProperty("colour.chart", "WHITE");
+            if(chartColour != null)
+                chart.setBackgroundPaint(getColour(chartColour));
             
             CategoryPlot plot = (CategoryPlot)chart.getPlot();
-            plot.setBackgroundPaint(Color.lightGray);
+            String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
+            if(backgroundColour != null)
+                plot.setBackgroundPaint(getColour(backgroundColour));
             plot.setDomainGridlinePaint(Color.white);
             plot.setRangeGridlinePaint(Color.white);
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));

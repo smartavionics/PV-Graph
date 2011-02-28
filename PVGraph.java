@@ -1241,7 +1241,9 @@ public class PVGraph extends ApplicationFrame {
             props = new Properties(System.getProperties());
             if(propsFile.canRead()) {
                 try {
-                    props.load(new FileInputStream(propsFile));
+                    FileInputStream propsInputStream = new FileInputStream(propsFile);
+                    props.load(propsInputStream);
+                    propsInputStream.close();
                 }
                 catch (IOException ioe) {
                     // relax

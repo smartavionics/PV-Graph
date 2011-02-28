@@ -1200,10 +1200,20 @@ public class PVGraph extends ApplicationFrame {
 
     public static Color getColour(String colourName) {
         try {
-            return (Color)Class.forName("org.jfree.chart.ChartColor").getField(colourName).get(null);
-        } catch (Exception e) {
-            return Color.decode(colourName);
+            return (Color)Class.forName("org.jfree.chart.ChartColor").getField(colourName.toUpperCase()).get(null);
         }
+        catch (NoSuchFieldException nsfe) {
+            try {
+                return Color.decode(colourName);
+            }
+            catch (NumberFormatException nfe) {
+                System.err.println("Bad colour (should be colour name or hex RGB): " + colourName);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void main (String[] args) {

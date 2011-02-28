@@ -407,8 +407,12 @@ public class PVGraph extends ApplicationFrame {
             String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
             if(backgroundColour != null)
                 plot.setBackgroundPaint(getColour(backgroundColour));
-            plot.setDomainGridlinePaint(Color.white);
-            plot.setRangeGridlinePaint(Color.white);
+            String gridlineColour = props.getProperty("colour.gridline", "WHITE");
+            if(gridlineColour != null) {
+                Color glc = getColour(gridlineColour);
+                plot.setDomainGridlinePaint(glc);
+                plot.setRangeGridlinePaint(glc);
+            }
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
             /*
             plot.setDomainCrosshairVisible(true);
@@ -618,8 +622,12 @@ public class PVGraph extends ApplicationFrame {
             String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
             if(backgroundColour != null)
                 plot.setBackgroundPaint(getColour(backgroundColour));
-            plot.setDomainGridlinePaint(Color.white);
-            plot.setRangeGridlinePaint(Color.white);
+            String gridlineColour = props.getProperty("colour.gridline", "WHITE");
+            if(gridlineColour != null) {
+                Color glc = getColour(gridlineColour);
+                plot.setDomainGridlinePaint(glc);
+                plot.setRangeGridlinePaint(glc);
+            }
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
             //plot.setDomainCrosshairVisible(true);
             //plot.setRangeCrosshairVisible(true);
@@ -817,8 +825,12 @@ public class PVGraph extends ApplicationFrame {
             String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
             if(backgroundColour != null)
                 plot.setBackgroundPaint(getColour(backgroundColour));
-            plot.setDomainGridlinePaint(Color.white);
-            plot.setRangeGridlinePaint(Color.white);
+            String gridlineColour = props.getProperty("colour.gridline", "WHITE");
+            if(gridlineColour != null) {
+                Color glc = getColour(gridlineColour);
+                plot.setDomainGridlinePaint(glc);
+                plot.setRangeGridlinePaint(glc);
+            }
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
             /*
             plot.setDomainCrosshairVisible(true);
@@ -963,8 +975,12 @@ public class PVGraph extends ApplicationFrame {
             String backgroundColour = props.getProperty("colour.background", "LIGHT_GRAY");
             if(backgroundColour != null)
                 plot.setBackgroundPaint(getColour(backgroundColour));
-            plot.setDomainGridlinePaint(Color.white);
-            plot.setRangeGridlinePaint(Color.white);
+            String gridlineColour = props.getProperty("colour.gridline", "WHITE");
+            if(gridlineColour != null) {
+                Color glc = getColour(gridlineColour);
+                plot.setDomainGridlinePaint(glc);
+                plot.setRangeGridlinePaint(glc);
+            }
             plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
             //plot.setDomainCrosshairVisible(true);
             //plot.setRangeCrosshairVisible(true);

@@ -62,6 +62,7 @@ import org.jfree.ui.RefineryUtilities;
 public class PVGraph extends ApplicationFrame {
     
     static Properties props;
+    static long propsLastLoadedAt;
     
     static LinkedList<PVGraph> graphs = new LinkedList<PVGraph>();
     
@@ -164,6 +165,7 @@ public class PVGraph extends ApplicationFrame {
                                 dispatchEvent(new WindowEvent(PVGraph.this, WindowEvent.WINDOW_CLOSING));
                                 return true;
                             case 'R' - 0x40:
+                                loadProperties();
                                 updateView();
                                 return true;
                             case 'S':
@@ -1216,14 +1218,26 @@ public class PVGraph extends ApplicationFrame {
         return null;
     }
 
+    public static boolean loadProperties() {
+        File propsFile = new File("pvgraph.properties");
+        if(props == null || propsFile.lastModified() > propsLastLoadedAt) {
+            propsLastLoadedAt = System.currentTimeMillis();
+            props = new Properties(System.getProperties());
+            if(propsFile.canRead()) {
+                try {
+                    props.load(new FileInputStream(propsFile));
+                }
+                catch (IOException ioe) {
+                    // relax
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static void main (String[] args) {
-        props = new Properties(System.getProperties());
-        try {
-            props.load(new FileInputStream("pvgraph.properties"));
-        }
-        catch (IOException ioe) {
-            // relax
-        }
+        loadProperties();
         try {
             Class.forName ("com.mysql.jdbc.Driver").newInstance();
             getDatabaseConnection();
@@ -1238,30 +1252,30 @@ public class PVGraph extends ApplicationFrame {
             // create first window
             new PVGraph();
             int smatoolPeriod = Integer.decode(props.getProperty("smatool.period", "0"));
-            if(smatoolPeriod > 0) {
+            while(smatoolPeriod > 0) {
+                loadProperties();
+                smatoolPeriod = Integer.decode(props.getProperty("smatool.period", "0"));
                 int smatoolStartHour = Integer.decode(props.getProperty("smatool.starthour", "0"));
                 int smatoolEndHour = Integer.decode(props.getProperty("smatool.endhour", "24"));
-                for(;;) {
-                    GregorianCalendar now = new GregorianCalendar();
-                    int nowHour = now.get(Calendar.HOUR_OF_DAY);
-                    if(nowHour >= smatoolStartHour && nowHour < smatoolEndHour) {
-                        try {
-                            runSmatool();
-                            synchronized (graphs) {
-                                for(PVGraph g : graphs)
-                                    g.updateView();
-                            }
-                        }
-                        catch (IOException ioe) {
-                            System.err.println(ioe.getMessage());
-                        }
-                    }
+                GregorianCalendar now = new GregorianCalendar();
+                int nowHour = now.get(Calendar.HOUR_OF_DAY);
+                if(nowHour >= smatoolStartHour && nowHour < smatoolEndHour) {
                     try {
-                        Thread.sleep(smatoolPeriod * 60 * 1000);
+                        runSmatool();
+                        synchronized (graphs) {
+                            for(PVGraph g : graphs)
+                                g.updateView();
+                        }
                     }
-                    catch (InterruptedException ie) {
-                        // break;
+                    catch (IOException ioe) {
+                        System.err.println(ioe.getMessage());
                     }
+                }
+                try {
+                    Thread.sleep(smatoolPeriod * 60 * 1000);
+                }
+                catch (InterruptedException ie) {
+                    // break;
                 }
             }
         }

@@ -376,18 +376,33 @@ public class PVGraph extends ApplicationFrame {
             
             TimeSeriesCollection dataset = new TimeSeriesCollection();
             double totalDayPower = 0;
+            Timestamp minTime = null;
+            Timestamp maxTime = null;
             
             for(DayData dd : dayData) {
                 TimeSeries s = new TimeSeries(dd.inverter + (dayData.size() > 1? ("-" + dd.serial) : ""));
-                for(int i = 0; i < dd.times.size(); ++i)
-                    s.addOrUpdate(new Minute(dd.times.get(i)), dd.powers.get(i));
+                for(int i = 0; i < dd.times.size(); ++i) {
+                    Timestamp ts = dd.times.get(i);
+                    if(dd.powers.get(i) > 0) {
+                        if(minTime == null || minTime.after(ts))
+                            minTime = ts;
+                        if(maxTime == null || maxTime.before(ts))
+                            maxTime = ts;
+                    }
+                    s.addOrUpdate(new Minute(ts), dd.powers.get(i));
+                }
                 dataset.addSeries(s);
                 totalDayPower += dd.endTotalPower - dd.startTotalPower;
             }
             
             String dayPower = totalDayPower < 1.0? String.format("%d WH", (int)(totalDayPower * 1000)) : String.format("%.2f KWH", totalDayPower);
+            if(maxTime != null && minTime != null) {
+                float powerHours = (maxTime.getTime() + 5 * 60 * 1000 - minTime.getTime()) / (1000f * 3600f);
+                double avg = totalDayPower / powerHours;
+                dayPower += "      Average " + (avg < 1.0? String.format("%d W", (int)(avg * 1000)) : String.format("%.2f KW", avg));
+            }
             JFreeChart chart = ChartFactory.createXYAreaChart(
-                new SimpleDateFormat("MMMMM d yyyy").format(date.getTime()) + "      " + dayPower, // title
+                new SimpleDateFormat("MMMMM d yyyy").format(date.getTime()) + "      Total " + dayPower, // title
                 "Time",     // x-axis label
                 "Watts",    // y-axis label
                 dataset,    // data
@@ -601,10 +616,10 @@ public class PVGraph extends ApplicationFrame {
             
             String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : String.format("%.1f KWH", totalPeriodPower);
             double avg = totalPeriodPower / (indexOfLastNonZeroPower + 1);
-            periodPower += "      " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
+            periodPower += "      Average " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
             
             JFreeChart chart = ChartFactory.createBarChart(
-                new SimpleDateFormat("MMMMM yyyy").format(date.getTime()) + "      " + periodPower, // title
+                new SimpleDateFormat("MMMMM yyyy").format(date.getTime()) + "      Total " + periodPower, // title
                 "Day",      // domain label
                 "KWH",       // range label
                 dataset,    // data
@@ -798,14 +813,14 @@ public class PVGraph extends ApplicationFrame {
             String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : (totalPeriodPower > 1000? String.format("%.3f MWH", totalPeriodPower / 1000.0) : String.format("%d KWH", (int)(totalPeriodPower + 0.5)));
             double avg = totalPeriodPower / (indexOfLastNonZeroPower + 1);
             if(detailed) {
-                periodPower += "      " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
+                periodPower += "      Average " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
             }
             else {
-                periodPower += "      " + (avg < 1.0? String.format("%d WH/Month", (int)(avg * 1000)) : String.format("%.2f KWH/Month", avg));
+                periodPower += "      Average " + (avg < 1.0? String.format("%d WH/Month", (int)(avg * 1000)) : String.format("%.2f KWH/Month", avg));
             }
             
             JFreeChart chart = ChartFactory.createXYAreaChart(
-                year + "      " + periodPower, // title
+                year + "      Total " + periodPower, // title
                 (detailed? "Day" : "Month"),      // x-axis label
                 "KWH",       // y-axis label
                 dataset,    // data
@@ -957,7 +972,7 @@ public class PVGraph extends ApplicationFrame {
             String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : (totalPeriodPower > 1000? String.format("%.3f MWH", totalPeriodPower / 1000.0) : String.format("%d KWH", (int)(totalPeriodPower + 0.5)));
             
             JFreeChart chart = ChartFactory.createBarChart(
-                periodPower, // title
+                "      Total " + periodPower, // title
                 "Year",      // domain label
                 "KWH",       // range label
                 dataset,    // data

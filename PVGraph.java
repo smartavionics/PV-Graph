@@ -853,7 +853,7 @@ public class PVGraph extends ApplicationFrame {
             */
             plot.setDomainPannable(true);
             plot.setRangePannable(true);
-            double maxPower = Double.parseDouble(props.getProperty("maxpower.year", "0"));
+            double maxPower = Double.parseDouble(props.getProperty(detailed? "maxpower.month" : "maxpower.year", "0"));
             if(maxPower > 0) {
                 ValueAxis powerAxis = plot.getRangeAxis();
                 powerAxis.setAutoRange(false);

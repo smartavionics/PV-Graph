@@ -810,7 +810,7 @@ public class PVGraph extends ApplicationFrame {
                 totalPeriodPower += pd.endTotalPower - pd.startTotalPower;
             }
             
-            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : (totalPeriodPower > 1000? String.format("%.3f MWH", totalPeriodPower / 1000.0) : String.format("%d KWH", (int)(totalPeriodPower + 0.5)));
+            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : (totalPeriodPower > 10000? String.format("%.3f MWH", totalPeriodPower / 1000.0) : String.format("%d KWH", (int)(totalPeriodPower + 0.5)));
             double avg = totalPeriodPower / (indexOfLastNonZeroPower + 1);
             if(detailed) {
                 periodPower += "      Average " + (avg < 1.0? String.format("%d WH/Day", (int)(avg * 1000)) : String.format("%.2f KWH/Day", avg));
@@ -969,7 +969,7 @@ public class PVGraph extends ApplicationFrame {
                 totalPeriodPower += yd.endTotalPower - yd.startTotalPower;
             }
             
-            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : (totalPeriodPower > 1000? String.format("%.3f MWH", totalPeriodPower / 1000.0) : String.format("%d KWH", (int)(totalPeriodPower + 0.5)));
+            String periodPower = totalPeriodPower < 1.0? String.format("%d WH", (int)(totalPeriodPower * 1000)) : (totalPeriodPower >= 10000? String.format("%.3f MWH", totalPeriodPower / 1000.0) : String.format("%d KWH", (int)(totalPeriodPower + 0.5)));
             
             JFreeChart chart = ChartFactory.createBarChart(
                 "      Total " + periodPower, // title

@@ -1047,6 +1047,8 @@ public class PVGraph extends ApplicationFrame {
             getDatabaseConnection();
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
+            long lastTime = 0;
+            int lastPower = 0;
             while (rs.next()) {
                 String serial = rs.getString("serial");
                 DayData dd = result.get(serial);
@@ -1057,9 +1059,24 @@ public class PVGraph extends ApplicationFrame {
                     dd.startTotalPower = rs.getDouble("ETotalToday");
                     result.put(serial, dd);
                 }
-                dd.times.add(rs.getTimestamp("DateTime"));
-                dd.powers.add(rs.getInt("CurrentPower"));
+                Timestamp currentTime = rs.getTimestamp("DateTime");
+                int currentPower = rs.getInt("CurrentPower");
+                if(lastTime != 0) {
+                    long fiveMinutesAfterLastTime = lastTime + 300 * 1000;
+                    long fiveMinutesBeforeCurrentTime = currentTime.getTime() - 300 * 1000;
+                    if(currentTime.getTime() > fiveMinutesAfterLastTime) {
+                        for(long t = fiveMinutesAfterLastTime; t <= fiveMinutesBeforeCurrentTime; t += 300 * 1000) {
+                            //System.err.println("Adding zero power at " + new Timestamp(t));
+                            dd.times.add(new Timestamp(t));
+                            dd.powers.add(0);
+                        }
+                    }
+                }
+                dd.times.add(currentTime);
+                dd.powers.add(currentPower);
                 dd.endTotalPower = rs.getDouble("ETotalToday");
+                lastTime = currentTime.getTime();
+                lastPower = currentPower;
             }
         } catch (SQLException e ) {
             System.err.println("Query failed: " + e.getMessage());
